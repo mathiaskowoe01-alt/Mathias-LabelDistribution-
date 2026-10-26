@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { Menu, X, Lock } from "lucide-react";
+import { Menu, X, Lock, Disc3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -46,6 +46,9 @@ export function Header() {
 
           <div className="hidden lg:flex items-center gap-2">
             <ThemeToggle />
+            <a href="/suivi" title="Espace Artiste - Suivi de distribution" aria-label="Espace Artiste - Suivi de distribution" className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border border-primary/40 bg-primary/10 text-xs font-semibold text-primary hover:bg-primary/20 hover:border-primary/60 transition-all shadow-xs">
+              <Disc3 className="h-3.5 w-3.5 text-primary animate-spin-vinyl" /> Suivi de sortie
+            </a>
             <a href="/admin" title="Espace administrateur" aria-label="Espace administrateur" className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-border bg-card/60 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-secondary/40 transition-all">
               <Lock className="h-3.5 w-3.5" /> Admin
             </a>
@@ -57,6 +60,9 @@ export function Header() {
 
           <div className="lg:hidden flex items-center gap-2">
             <ThemeToggle />
+            <a href="/suivi" title="Suivi de sortie" aria-label="Suivi de sortie" className="inline-flex items-center justify-center h-9 w-9 rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-all">
+              <Disc3 className="h-4 w-4 animate-spin-vinyl" />
+            </a>
             <a href="/admin" title="Espace administrateur" aria-label="Espace administrateur" className="inline-flex items-center justify-center h-9 w-9 rounded-full border border-border bg-card/60 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all">
               <Lock className="h-4 w-4" />
             </a>
@@ -76,6 +82,9 @@ export function Header() {
             <div className="pt-2 pb-1">
               <ThemeToggle showLabel className="w-full justify-start rounded-xl h-11 px-4 border-border bg-card/60" />
             </div>
+            <a href="/suivi" onClick={() => setOpen(false)} className="flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-semibold text-primary bg-primary/10 hover:bg-primary/20 transition-colors">
+              <Disc3 className="h-4 w-4 animate-spin-vinyl" /> Espace Artiste · Suivi de sortie
+            </a>
             <Button asChild className="mt-2 bg-gradient-gold text-black hover:opacity-90 font-semibold rounded-full">
               <a href="#tarifs" onClick={() => setOpen(false)}>En profiter</a>
             </Button>

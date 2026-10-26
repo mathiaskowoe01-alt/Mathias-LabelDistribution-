@@ -36,6 +36,7 @@ export function Footer() {
               {NAV.map((item) => (
                 <li key={item.href}><a href={item.href} className="text-sm text-foreground/80 hover:text-primary transition-colors">{item.label}</a></li>
               ))}
+              <li><a href="/suivi" className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-primary" /> Suivi de sortie (Artiste)</a></li>
             </ul>
           </div>
 
@@ -54,6 +55,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground text-center sm:text-left">© 2026 MR - K Distribution. Tous droits réservés. Fait avec<span className="text-primary mx-1">♥</span>pour les artistes africains.</p>
           <div className="flex items-center gap-5 text-xs text-muted-foreground">
+            <a href="/suivi" className="text-primary hover:underline font-semibold">Suivi de sortie</a>
             <a href="/mentions-legales" className="hover:text-foreground transition-colors">Mentions légales</a>
             <a href="/confidentialite" className="hover:text-foreground transition-colors">Confidentialité</a>
             <a href="/cgv" className="hover:text-foreground transition-colors">CGV</a>

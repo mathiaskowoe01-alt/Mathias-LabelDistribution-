@@ -7,6 +7,26 @@ async function isAuthed(req: NextRequest): Promise<boolean> {
   return verifySessionToken(token);
 }
 
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const submission = await db.submission.findUnique({
+      where: { id },
+      include: { tracks: { orderBy: { position: "asc" } } },
+    });
+    if (!submission) {
+      return NextResponse.json({ error: "Sortie introuvable" }, { status: 404 });
+    }
+    return NextResponse.json({ submission });
+  } catch (e) {
+    console.error("GET /api/submissions/[id] error", e);
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+  }
+}
+
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
