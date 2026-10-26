@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Submission {
+  id            String   @id @default(cuid())
+  plan          String
+  status        String   @default("pending")
+  amount        Int
+
+  artistName    String
+  artistEmail   String
+  artistPhone   String
+  artistWhatsapp String?
+  artistBio     String?
+  artistCity    String?
+  artistPhoto   String?
+  socialLinks   String?
+
+  releaseTitle  String
+  releaseGenre  String
+  releaseDate   String?
+  releaseLanguage String?
+  coverArtUrl   String?
+  explicit      Boolean  @default(false)
+
+  paymentMethod String?
+
+  tracks        Track[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Track {
+  id            String   @id @default(cuid())
+  submissionId  String
+  submission    Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  position      Int
+  title         String
+  isrc          String?
+  audioUrl      String?
+  featuredArtists String?
+  duration      String?
+  explicit      Boolean  @default(false)
+}
