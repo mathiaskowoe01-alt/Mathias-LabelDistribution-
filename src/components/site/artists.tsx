@@ -44,7 +44,7 @@ const CURATED_DEMO_RELEASES: PublicArtist[] = [
     coverArtUrl: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&auto=format&fit=crop&q=80",
     plan: "single",
     status: "delivered",
-    social: { spotify: "https://spotify.com" },
+    social: { spotify: "https://spotify.com", appleMusic: "https://music.apple.com" },
     tracks: [{ id: "t1", title: "Soleil Levant", duration: "3:18", featuredArtists: "feat. Kelyan" }],
   },
   {
@@ -58,7 +58,7 @@ const CURATED_DEMO_RELEASES: PublicArtist[] = [
     coverArtUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&auto=format&fit=crop&q=80",
     plan: "ep",
     status: "delivered",
-    social: { spotify: "https://spotify.com", instagram: "@aurakpedji" },
+    social: { spotify: "https://spotify.com", appleMusic: "https://music.apple.com", instagram: "@aurakpedji" },
     tracks: [{ id: "t2", title: "Minon", duration: "3:45" }],
   },
   {
@@ -72,7 +72,7 @@ const CURATED_DEMO_RELEASES: PublicArtist[] = [
     coverArtUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80",
     plan: "album",
     status: "delivered",
-    social: { spotify: "https://spotify.com", tiktok: "@dvibe_official" },
+    social: { spotify: "https://spotify.com", appleMusic: "https://music.apple.com", tiktok: "@dvibe_official" },
     tracks: [{ id: "t3", title: "Pont De Gaulle", duration: "3:02" }],
   },
 ];
@@ -100,7 +100,6 @@ export function Artists() {
         console.error(e);
       }
       if (!cancelled) {
-        // Fallback to curated showcase
         setArtists(CURATED_DEMO_RELEASES);
         setLoading(false);
       }
@@ -126,7 +125,6 @@ export function Artists() {
 
   return (
     <section id="artistes" className="relative py-24 sm:py-32 border-t border-border/60 overflow-hidden">
-      {/* Background atmospheric ambient light */}
       <div className="pointer-events-none absolute top-1/3 -left-32 h-[32rem] w-[32rem] rounded-full bg-primary/10 blur-[130px]" />
       <div className="pointer-events-none absolute bottom-10 right-0 h-96 w-96 rounded-full bg-accent/10 blur-[140px]" />
 
@@ -135,7 +133,7 @@ export function Artists() {
           <div className="max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-primary">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              Catalogue & Sorties
+              Catalogue &amp; Sorties
             </span>
             <h2 className="mt-5 font-display text-3xl sm:text-5xl font-bold tracking-tight leading-tight">
               Artistes &amp; <span className="text-gradient-gold">Sorties Récentes</span>
@@ -154,7 +152,6 @@ export function Artists() {
           </div>
         </div>
 
-        {/* Genre filter tags */}
         {genres.length > 2 && (
           <div className="mt-10 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             {genres.map((g) => (
@@ -174,12 +171,13 @@ export function Artists() {
           </div>
         )}
 
-        {/* Dynamic artist cards grid */}
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
           <AnimatePresence mode="popLayout">
             {filteredArtists.map((artist, idx) => {
               const isPlaying = currentlyPlaying === artist.id;
               const track = artist.tracks?.[0];
+              const spotifyUrl = artist.social?.spotify;
+              const appleMusicUrl = artist.social?.appleMusic || artist.social?.apple;
 
               return (
                 <motion.div
@@ -191,7 +189,6 @@ export function Artists() {
                   transition={{ duration: 0.45, delay: idx * 0.08 }}
                   className="group relative flex flex-col rounded-3xl border border-border bg-card/80 hover:bg-card hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl shadow-xs overflow-hidden"
                 >
-                  {/* Cover container with vinyl peek out effect */}
                   <div className="relative aspect-square w-full overflow-hidden bg-secondary/50">
                     <img
                       src={
@@ -203,15 +200,12 @@ export function Artists() {
                       loading="lazy"
                     />
 
-                    {/* Dark gradient overlay for contrast */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                    {/* Interactive Vinyl sleeve peek effect */}
                     <div className="absolute -right-14 top-1/2 -translate-y-1/2 h-36 w-36 sm:h-44 sm:w-44 opacity-0 group-hover:opacity-100 group-hover:right-3 transition-all duration-500 ease-out pointer-events-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
                       <VinylRecord direction="cw" className="h-full w-full" />
                     </div>
 
-                    {/* Top badges */}
                     <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-black/60 backdrop-blur-md text-white border border-white/10 shadow-sm">
                         <Radio className="h-3 w-3 text-emerald-400 animate-pulse" />
@@ -223,7 +217,6 @@ export function Artists() {
                       </span>
                     </div>
 
-                    {/* Play preview button */}
                     <button
                       onClick={() => togglePlay(artist.id)}
                       aria-label={isPlaying ? "Mettre en pause" : "Écouter l'extrait"}
@@ -232,7 +225,6 @@ export function Artists() {
                       {isPlaying ? <Pause className="h-5 w-5 fill-black" /> : <Play className="h-5 w-5 fill-black ml-0.5" />}
                     </button>
 
-                    {/* Bottom overlay info on image */}
                     <div className="absolute bottom-4 left-4 right-20 pointer-events-none">
                       <div className="text-xs font-semibold uppercase tracking-wider text-amber-300">
                         {artist.releaseGenre}
@@ -243,7 +235,6 @@ export function Artists() {
                     </div>
                   </div>
 
-                  {/* Card Content Details */}
                   <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                     <div>
                       <div className="flex items-center justify-between gap-2">
@@ -277,30 +268,44 @@ export function Artists() {
                       )}
                     </div>
 
-                    {/* Footer card links and distribution confirmation */}
                     <div className="pt-3 border-t border-border flex items-center justify-between gap-2 text-xs">
-                      <span className="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
+                      <span className="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium shrink-0">
                         <CheckCircle2 className="h-3.5 w-3.5" />
-                        100 % royalties reversées
+                        100 % royalties
                       </span>
 
-                      {artist.social?.spotify ? (
-                        <a
-                          href={artist.social.spotify}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-primary hover:underline font-semibold"
-                        >
-                          Spotify <ExternalLink className="h-3 w-3" />
-                        </a>
-                      ) : (
-                        <a
-                          href="#tarifs"
-                          className="inline-flex items-center gap-1 text-primary hover:underline font-semibold"
-                        >
-                          Distribuer <ArrowRight className="h-3 w-3" />
-                        </a>
-                      )}
+                      <div className="flex flex-wrap items-center justify-end gap-2.5">
+                        {spotifyUrl && (
+                          <a
+                            href={spotifyUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-[#1DB954] hover:underline font-semibold"
+                            title="Écouter sur Spotify"
+                          >
+                            Spotify <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
+                        {appleMusicUrl && (
+                          <a
+                            href={appleMusicUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-[#FA2D48] hover:underline font-semibold"
+                            title="Écouter sur Apple Music"
+                          >
+                            Apple Music <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
+                        {!spotifyUrl && !appleMusicUrl && (
+                          <a
+                            href="#tarifs"
+                            className="inline-flex items-center gap-1 text-primary hover:underline font-semibold"
+                          >
+                            Distribuer <ArrowRight className="h-3 w-3" />
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -309,7 +314,6 @@ export function Artists() {
           </AnimatePresence>
         </div>
 
-        {/* Bottom invitation banner */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Pencil, User, Mail, Phone, MapPin, Globe, Sparkles,
   Camera, Upload, Trash2, Loader2, Check, ExternalLink,
-  Instagram, Youtube, Music, MessageCircle, AlertCircle
+  Instagram, Youtube, Music, MessageCircle, AlertCircle, Disc3
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -55,6 +55,7 @@ export function EditArtistDialog({
   const [tiktok, setTiktok] = useState("");
   const [youtube, setYoutube] = useState("");
   const [spotify, setSpotify] = useState("");
+  const [appleMusic, setAppleMusic] = useState("");
 
   // Sync state when artist changes
   useEffect(() => {
@@ -72,6 +73,7 @@ export function EditArtistDialog({
       setTiktok(soc.tiktok || "");
       setYoutube(soc.youtube || "");
       setSpotify(soc.spotify || "");
+      setAppleMusic(soc.appleMusic || soc.apple || "");
     }
   }, [artist, open]);
 
@@ -142,6 +144,7 @@ export function EditArtistDialog({
       if (tiktok.trim()) socialLinksObj.tiktok = tiktok.trim();
       if (youtube.trim()) socialLinksObj.youtube = youtube.trim();
       if (spotify.trim()) socialLinksObj.spotify = spotify.trim();
+      if (appleMusic.trim()) socialLinksObj.appleMusic = appleMusic.trim();
 
       const res = await fetch("/api/artists", {
         method: "PATCH",
@@ -426,6 +429,18 @@ export function EditArtistDialog({
                   value={spotify}
                   onChange={(e) => setSpotify(e.target.value)}
                   placeholder="https://open.spotify.com/artist/..."
+                  className="h-9 rounded-xl text-xs focus-visible:ring-primary/30"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium flex items-center gap-1.5">
+                  <Disc3 className="h-3.5 w-3.5 text-rose-500" /> Apple Music Artiste
+                </Label>
+                <Input
+                  value={appleMusic}
+                  onChange={(e) => setAppleMusic(e.target.value)}
+                  placeholder="https://music.apple.com/artist/..."
                   className="h-9 rounded-xl text-xs focus-visible:ring-primary/30"
                 />
               </div>

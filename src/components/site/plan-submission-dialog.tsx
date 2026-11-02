@@ -38,6 +38,7 @@ export type ArtistProfile = {
   tiktok: string;
   youtube: string;
   spotify: string;
+  appleMusic: string;
 };
 
 type Plan = {
@@ -91,7 +92,7 @@ export function PlanSubmissionDialog({
   const [showErrors, setShowErrors] = useState(false);
 
   const [artist, setArtist] = useState<ArtistProfile>({
-    name: "", email: "", phone: "", whatsapp: "", city: "", bio: "", instagram: "", tiktok: "", youtube: "", spotify: "",
+    name: "", email: "", phone: "", whatsapp: "", city: "", bio: "", instagram: "", tiktok: "", youtube: "", spotify: "", appleMusic: "",
   });
   const [release, setRelease] = useState({ title: "", genre: "", language: "", releaseDate: "", coverArtUrl: "", explicit: false });
   const [tracks, setTracks] = useState<ManualTrackDraft[]>([{ id: uid(), title: "", isrc: "", audioUrl: "", featuredArtists: "", duration: "", explicit: false }]);
@@ -125,6 +126,7 @@ export function PlanSubmissionDialog({
             tiktok: parsed.tiktok || prev.tiktok,
             youtube: parsed.youtube || prev.youtube,
             spotify: parsed.spotify || prev.spotify,
+            appleMusic: parsed.appleMusic || prev.appleMusic || "",
           }));
           setHasPrefilled(true);
         }
@@ -223,7 +225,7 @@ export function PlanSubmissionDialog({
         artistWhatsapp: artist.whatsapp.trim(),
         artistBio: artist.bio.trim(),
         artistCity: artist.city.trim(),
-        socialLinks: { instagram: artist.instagram, tiktok: artist.tiktok, youtube: artist.youtube, spotify: artist.spotify },
+        socialLinks: { instagram: artist.instagram, tiktok: artist.tiktok, youtube: artist.youtube, spotify: artist.spotify, appleMusic: artist.appleMusic },
         releaseTitle: release.title.trim(),
         releaseGenre: release.genre,
         releaseLanguage: release.language,
@@ -547,6 +549,9 @@ export function PlanSubmissionDialog({
                     className="h-11 rounded-xl"
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div className="space-y-1.5">
                   <Label htmlFor="a-spotify">Profil Spotify (optionnel)</Label>
                   <Input
@@ -554,6 +559,16 @@ export function PlanSubmissionDialog({
                     value={artist.spotify}
                     onChange={(e) => setArtist({ ...artist, spotify: e.target.value })}
                     placeholder="https://open.spotify.com/artist/..."
+                    className="h-11 rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="a-apple">Profil Apple Music (optionnel)</Label>
+                  <Input
+                    id="a-apple"
+                    value={artist.appleMusic}
+                    onChange={(e) => setArtist({ ...artist, appleMusic: e.target.value })}
+                    placeholder="https://music.apple.com/artist/..."
                     className="h-11 rounded-xl"
                   />
                 </div>

@@ -206,7 +206,8 @@ export function SubmissionDetailDialog({
               {social.instagram && <DetailRow label="Instagram" value={social.instagram} />}
               {social.tiktok && <DetailRow label="TikTok" value={social.tiktok} />}
               {social.youtube && <DetailRow label="YouTube" value={social.youtube} />}
-              {social.spotify && <DetailRow label="Spotify" value={social.spotify} />}
+              {social.spotify && <DetailRow label="Spotify" value={social.spotify} link />}
+              {(social.appleMusic || social.apple) && <DetailRow label="Apple Music" value={social.appleMusic || social.apple} link />}
             </div>
           </div>
 
@@ -860,6 +861,20 @@ export function ArtistDetailModal({
                   <Mail className="h-3.5 w-3.5 mr-1" /> Email
                 </a>
               </Button>
+              {social.spotify && (
+                <Button asChild size="sm" variant="outline" className="h-8 rounded-full text-xs text-[#1DB954] border-[#1DB954]/30 hover:bg-[#1DB954]/10">
+                  <a href={social.spotify} target="_blank" rel="noreferrer">
+                    <Music className="h-3.5 w-3.5 mr-1" /> Spotify
+                  </a>
+                </Button>
+              )}
+              {(social.appleMusic || social.apple) && (
+                <Button asChild size="sm" variant="outline" className="h-8 rounded-full text-xs text-[#FA2D48] border-[#FA2D48]/30 hover:bg-[#FA2D48]/10">
+                  <a href={social.appleMusic || social.apple} target="_blank" rel="noreferrer">
+                    <Disc3 className="h-3.5 w-3.5 mr-1" /> Apple Music
+                  </a>
+                </Button>
+              )}
               <Button asChild size="sm" className="h-8 rounded-full text-xs bg-[#25D366] hover:bg-[#1ebd5a] text-white">
                 <a
                   href={`https://wa.me/${formatWhatsAppPhone(primary.artistWhatsapp || primary.artistPhone)}`}

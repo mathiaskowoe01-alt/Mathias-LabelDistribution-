@@ -93,6 +93,7 @@ export function AddProductionArtistDialog({
   const [artistPhone, setArtistPhone] = useState("");
   const [artistWhatsapp, setArtistWhatsapp] = useState("");
   const [spotifyUrl, setSpotifyUrl] = useState("");
+  const [appleMusicUrl, setAppleMusicUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
   const [tiktokUrl, setTiktokUrl] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -240,6 +241,7 @@ export function AddProductionArtistDialog({
     setArtistPhone(pick.phone);
     setArtistWhatsapp(pick.phone);
     setSpotifyUrl("https://open.spotify.com");
+    setAppleMusicUrl("https://music.apple.com");
     setInstagramUrl(`@${pick.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`);
     setPlan(pick.plan);
     setStatus(pick.status);
@@ -266,6 +268,7 @@ export function AddProductionArtistDialog({
     setArtistPhone("");
     setArtistWhatsapp("");
     setSpotifyUrl("");
+    setAppleMusicUrl("");
     setInstagramUrl("");
     setTiktokUrl("");
     setYoutubeUrl("");
@@ -390,6 +393,7 @@ export function AddProductionArtistDialog({
 
       const socialLinks: Record<string, string> = {};
       if (spotifyUrl.trim()) socialLinks.spotify = spotifyUrl.trim();
+      if (appleMusicUrl.trim()) socialLinks.appleMusic = appleMusicUrl.trim();
       if (instagramUrl.trim()) socialLinks.instagram = instagramUrl.trim();
       if (tiktokUrl.trim()) socialLinks.tiktok = tiktokUrl.trim();
       if (youtubeUrl.trim()) socialLinks.youtube = youtubeUrl.trim();
@@ -673,6 +677,15 @@ export function AddProductionArtistDialog({
                       value={spotifyUrl}
                       onChange={(e) => setSpotifyUrl(e.target.value)}
                       placeholder="https://open.spotify.com/artist/..."
+                      className="h-10 rounded-xl bg-background/70 text-xs"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Lien Apple Music Artiste / Sortie</Label>
+                    <Input
+                      value={appleMusicUrl}
+                      onChange={(e) => setAppleMusicUrl(e.target.value)}
+                      placeholder="https://music.apple.com/artist/..."
                       className="h-10 rounded-xl bg-background/70 text-xs"
                     />
                   </div>
