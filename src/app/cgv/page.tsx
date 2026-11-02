@@ -4,8 +4,8 @@ import { Footer } from "@/components/site/footer";
 import { FileText, Coins, Clock, CheckCircle2, AlertCircle, RefreshCcw } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Conditions Générales de Vente (CGV) — MR - K Distribution",
-  description: "Conditions générales de vente et de distribution de MR - K Distribution.",
+  title: "Conditions Générales de Vente (CGV) — Mathias Label",
+  description: "Conditions générales de vente et de distribution de Mathias Label.",
 };
 
 export default function CGVPage() {
@@ -23,7 +23,7 @@ export default function CGVPage() {
               Conditions Générales de <span className="text-gradient-gold">Vente & de Service</span>
             </h1>
             <p className="mt-3 text-sm sm:text-base text-muted-foreground">
-              Régissant les relations contractuelles entre MR - K Distribution et les artistes / producteurs indépendants.
+              Régissant les relations contractuelles entre Mathias Label et les artistes / producteurs indépendants.
             </p>
           </div>
 
@@ -37,7 +37,7 @@ export default function CGVPage() {
                 <h2 className="font-display text-xl font-bold">1. Objet du Service</h2>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Les présentes Conditions Générales définissent les droits et obligations des parties dans le cadre de la prestation de distribution numérique d'œuvres musicales (singles, EPs, albums) fournie par <strong>MR - K Distribution</strong> auprès des plateformes mondiales de streaming et de téléchargement légal (Spotify, Apple Music, Deezer, TikTok, Boomplay, Audiomack, YouTube Music, etc.).
+                Les présentes Conditions Générales définissent les droits et obligations des parties dans le cadre de la prestation de distribution numérique d'œuvres musicales (singles, EPs, albums) fournie par <strong>Mathias Label</strong> auprès des plateformes mondiales de streaming et de téléchargement légal (Spotify, Apple Music, Deezer, TikTok, Boomplay, Audiomack, YouTube Music, etc.).
               </p>
             </section>
 
@@ -71,7 +71,7 @@ export default function CGVPage() {
                   </div>
                 </div>
                 <p>
-                  Le règlement s'effectue par Mobile Money (MTN, Moov, Wave), Carte bancaire, Virement ou via arrangement WhatsApp validé par l'équipe MR - K. Le traitement de la commande débute dès confirmation de la réception du règlement.
+                  Le règlement s'effectue par Mobile Money (MTN, Moov, Wave), Carte bancaire, Virement ou via arrangement WhatsApp validé par l'équipe Mathias Label. Le traitement de la commande débute dès confirmation de la réception du règlement.
                 </p>
               </div>
             </section>
@@ -85,10 +85,10 @@ export default function CGVPage() {
                 <h2 className="font-display text-xl font-bold">3. Garantie 100 % Royalties</h2>
               </div>
               <p className="text-sm text-foreground/90 leading-relaxed font-medium">
-                MR - K Distribution s'engage solennellement à ne prélever <strong>aucune commission ni pourcentage</strong> sur les revenus de streaming et de téléchargement générés par les œuvres de l'artiste.
+                Mathias Label s'engage solennellement à ne prélever <strong>aucune commission ni pourcentage</strong> sur les revenus de streaming et de téléchargement générés par les œuvres de l'artiste.
               </p>
               <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                100 % des royalties perçues par MR - K en provenance des DSP pour le compte de l'artiste sont reversées à ce dernier selon les périodicités de reddition de comptes des plateformes.
+                100 % des royalties perçues par Mathias Label en provenance des DSP pour le compte de l'artiste sont reversées à ce dernier selon les périodicités de reddition de comptes des plateformes.
               </p>
             </section>
 
@@ -101,7 +101,7 @@ export default function CGVPage() {
                 <h2 className="font-display text-xl font-bold">4. Délais d'Exécution & Ingestion DSP</h2>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Après validation de la conformité des fichiers audio (formats WAV/FLAC ou MP3 320kbps de haute qualité) et du visuel de pochette (minimum 3000x3000px, sans logos non autorisés ni prix), MR - K livre les fichiers aux plateformes sous un délai indicatif de <strong>48 à 72 heures ouvrées</strong>. Les délais d'affichage effectif dépendent des processus d'ingestion propres à chaque plateforme (Spotify, Apple Music, etc.).
+                Après validation de la conformité des fichiers audio (formats WAV/FLAC ou MP3 320kbps de haute qualité) et du visuel de pochette (minimum 3000x3000px, sans logos non autorisés ni prix), Mathias Label livre les fichiers aux plateformes sous un délai indicatif de <strong>48 à 72 heures ouvrées</strong>. Les délais d'affichage effectif dépendent des processus d'ingestion propres à chaque plateforme (Spotify, Apple Music, etc.).
               </p>
             </section>
 
@@ -115,7 +115,7 @@ export default function CGVPage() {
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 L'artiste garantit être le créateur et titulaire exclusif des droits d'exploitation des enregistrements, compositions et pochettes soumis, ou détenir les autorisations / licences formelles (notamment concernant les samples, beats ou featurings).
-                MR - K Distribution décline toute responsabilité en cas de litige relatif à une contrefaçon ou atteinte aux droits d'un tiers commise par l'artiste.
+                Mathias Label décline toute responsabilité en cas de litige relatif à une contrefaçon ou atteinte aux droits d'un tiers commise par l'artiste.
               </p>
             </section>
 

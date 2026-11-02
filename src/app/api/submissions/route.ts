@@ -41,6 +41,11 @@ export async function POST(req: NextRequest) {
       album: 120000,
     };
 
+    const customAmount =
+      typeof body.amount === "number" && !Number.isNaN(body.amount) && body.amount >= 0
+        ? Math.round(body.amount)
+        : PLAN_PRICES[plan];
+
     const artistName = String(body.artistName || "").trim();
     const artistEmail = String(body.artistEmail || "").trim();
     const artistPhone = String(body.artistPhone || "").trim();
@@ -64,11 +69,20 @@ export async function POST(req: NextRequest) {
       explicit?: boolean;
     }> = Array.isArray(body.tracks) ? body.tracks : [];
 
+    const socialLinksValue = body.socialLinks
+      ? typeof body.socialLinks === "string"
+        ? body.socialLinks
+        : JSON.stringify(body.socialLinks)
+      : null;
+
     const submission = await db.submission.create({
       data: {
         plan,
-        status: body.status && ["pending", "approved", "delivered", "rejected"].includes(body.status) ? body.status : "pending",
-        amount: PLAN_PRICES[plan],
+        status:
+          body.status && ["pending", "approved", "delivered", "rejected"].includes(body.status)
+            ? body.status
+            : "pending",
+        amount: customAmount,
         artistName,
         artistEmail,
         artistPhone,
@@ -76,7 +90,7 @@ export async function POST(req: NextRequest) {
         artistBio: body.artistBio ? String(body.artistBio) : null,
         artistCity: body.artistCity ? String(body.artistCity) : null,
         artistPhoto: body.artistPhoto ? String(body.artistPhoto) : null,
-        socialLinks: body.socialLinks ? JSON.stringify(body.socialLinks) : null,
+        socialLinks: socialLinksValue,
         releaseTitle,
         releaseGenre,
         releaseDate: body.releaseDate ? String(body.releaseDate) : null,

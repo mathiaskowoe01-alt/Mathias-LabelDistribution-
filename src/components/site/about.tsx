@@ -48,7 +48,7 @@ export function About() {
               <span className="text-gradient-gold">pas pour la plateforme.</span>
             </h2>
             <p className="mt-6 text-base sm:text-lg text-muted-foreground leading-relaxed">
-              MR - K Distribution est né d'un constat simple : trop d'artistes africains talentueux restent invisibles faute d'accès propre aux plateformes. Nous avons construit un pont — transparent, rapide, sans commission sur vos royalties. Notre rôle : mettre votre musique partout où elle mérite d'être entendue, et vous laisser libre de créer.
+              Mathias Label est né d'un constat simple : trop d'artistes africains talentueux restent invisibles faute d'accès propre aux plateformes. Nous avons construit un pont — transparent, rapide, sans commission sur vos royalties. Notre rôle : mettre votre musique partout où elle mérite d'être entendue, et vous laisser libre de créer.
             </p>
 
             <div className="mt-7 rounded-2xl border border-primary/30 bg-primary/5 p-5">

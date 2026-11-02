@@ -86,14 +86,14 @@ export function ManualCoverInput({ value, onChange, className }: ManualCoverInpu
   }
 
   return (
-    <div className={cn("space-y-3 rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs", className)}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div>
+    <div className={cn("space-y-3 rounded-2xl border border-border bg-card p-3.5 sm:p-5 shadow-xs", className)}>
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
           <Label className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
-            <ImageIcon className="h-4 w-4 text-primary" /> Pochette HD officielle
+            <ImageIcon className="h-4 w-4 text-primary shrink-0" /> Pochette HD officielle
           </Label>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
-            Saisissez un lien direct (Drive, WeTransfer, Dropbox) ou sélectionnez une image locale.
+          <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
+            Collez un lien direct (Drive, WeTransfer, Dropbox) ou importez une image locale (JPG/PNG, carré 3000×3000px recommandé).
           </p>
         </div>
         {value && (
@@ -102,28 +102,28 @@ export function ManualCoverInput({ value, onChange, className }: ManualCoverInpu
             variant="ghost"
             size="sm"
             onClick={() => onChange("")}
-            className="h-8 px-2.5 text-xs text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 gap-1 self-start sm:self-auto"
+            className="h-8 px-2.5 text-xs text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 gap-1 shrink-0"
           >
             <Trash2 className="h-3.5 w-3.5" />
-            <span>Retirer</span>
+            <span className="hidden xs:inline">Retirer</span>
           </Button>
         )}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+      <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
         {/* URL Input */}
-        <div className="relative flex-1 w-full">
-          <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <div className="relative flex-1 min-w-0">
+          <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder="https://... (Lien Google Drive, Dropbox, WeTransfer ou URL directe)"
-            className="pl-9 h-11 rounded-xl bg-background text-xs"
+            placeholder="https://... (Google Drive, Dropbox, WeTransfer ou URL directe)"
+            className="pl-9 h-11 rounded-xl bg-background text-sm sm:text-xs"
           />
         </div>
 
-        {/* Local File Picker Button (No Drag and Drop) */}
-        <div className="shrink-0 w-full sm:w-auto">
+        {/* Local File Picker Button */}
+        <div className="shrink-0">
           <input
             ref={fileInputRef}
             type="file"
@@ -146,7 +146,7 @@ export function ManualCoverInput({ value, onChange, className }: ManualCoverInpu
             ) : (
               <>
                 <Upload className="h-4 w-4 text-primary" />
-                <span>Choisir un fichier</span>
+                <span>Choisir une image</span>
               </>
             )}
           </Button>
@@ -159,7 +159,7 @@ export function ManualCoverInput({ value, onChange, className }: ManualCoverInpu
           <img
             src={value}
             alt="Aperçu pochette"
-            className="h-14 w-14 rounded-lg object-cover border border-border shadow-xs shrink-0 bg-background"
+            className="h-12 w-12 sm:h-14 sm:w-14 rounded-lg object-cover border border-border shadow-xs shrink-0 bg-background"
             onError={(e) => {
               (e.currentTarget as HTMLElement).style.display = "none";
             }}
@@ -170,7 +170,7 @@ export function ManualCoverInput({ value, onChange, className }: ManualCoverInpu
               <span className="truncate">Pochette configurée</span>
             </div>
             <div className="text-[11px] text-muted-foreground truncate font-mono mt-0.5">
-              {value.startsWith("data:") ? "Fichier importé localement" : value}
+              {value.startsWith("data:") ? "Fichier image importé localement" : value}
             </div>
           </div>
           {value.startsWith("http") && (
@@ -241,10 +241,11 @@ export function ManualTracklistInput({
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Erreur de téléversement");
 
-      // Auto-populate title if empty
+      const currentTrack = tracks.find((t) => t.id === trackId);
       const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " ").trim();
       onUpdateTrack(trackId, {
         audioUrl: data.url,
+        ...(currentTrack && !currentTrack.title.trim() ? { title: cleanName } : {}),
       });
       toast({
         title: "Audio chargé !",
@@ -267,24 +268,24 @@ export function ManualTracklistInput({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div>
           <Label className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
-            <Music className="h-4 w-4 text-primary" /> Tracklist officielle ({tracks.length}/{maxTracks})
+            <Music className="h-4 w-4 text-primary shrink-0" /> Tracklist officielle ({tracks.length}/{maxTracks})
           </Label>
           <p className="text-[11px] text-muted-foreground mt-0.5">
-            Saisie manuelle des morceaux : titre, lien audio/master, featurings et code ISRC.
+            Renseignez chaque piste : titre officiel, fichier ou lien master, featurings, durée et code ISRC.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {onAutoIsrc && (
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onAutoIsrc}
-              className="h-8 rounded-xl text-xs gap-1.5 hover:border-primary/40"
+              className="h-9 flex-1 sm:flex-initial rounded-xl text-xs gap-1.5 hover:border-primary/40"
               title="Générer automatiquement des codes ISRC uniques conformes"
             >
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <Sparkles className="h-3.5 w-3.5 text-primary shrink-0" />
               <span>Générer ISRC</span>
             </Button>
           )}
@@ -294,10 +295,10 @@ export function ManualTracklistInput({
               type="button"
               size="sm"
               onClick={onAddTrack}
-              className="h-8 rounded-xl text-xs gap-1.5 bg-gradient-gold text-black hover:opacity-90 font-semibold"
+              className="h-9 flex-1 sm:flex-initial rounded-xl text-xs gap-1.5 bg-gradient-gold text-black hover:opacity-90 font-semibold"
             >
-              <Plus className="h-3.5 w-3.5" />
-              <span>+ Ajouter un titre</span>
+              <Plus className="h-3.5 w-3.5 shrink-0" />
+              <span>Ajouter un titre</span>
             </Button>
           )}
         </div>
@@ -353,11 +354,11 @@ function TrackItemCard({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-xs space-y-3 hover:border-border/80 transition-all">
+    <div className="rounded-2xl border border-border bg-card p-3.5 sm:p-4 shadow-xs space-y-3 hover:border-border/80 transition-all">
       {/* Track Header: Position, Title, Explicit, Delete */}
-      <div className="flex items-center gap-3">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-secondary text-primary font-mono text-xs font-bold border border-border">
-          {index}
+      <div className="flex items-center gap-2.5 sm:gap-3">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary text-primary font-mono text-xs font-bold border border-border">
+          {String(index).padStart(2, "0")}
         </span>
 
         <div className="flex-1 min-w-0">
@@ -370,8 +371,8 @@ function TrackItemCard({
           />
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
-          <label className="hidden sm:flex items-center gap-1.5 cursor-pointer text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 shrink-0">
+          <label className="hidden sm:flex items-center gap-1.5 cursor-pointer text-xs text-muted-foreground px-2 py-1.5 rounded-lg hover:bg-secondary/50 transition-colors">
             <Checkbox
               checked={track.explicit}
               onCheckedChange={(v) => onUpdate({ explicit: Boolean(v) })}
@@ -383,8 +384,9 @@ function TrackItemCard({
             <button
               type="button"
               onClick={onRemove}
-              className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+              className="h-9 w-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
               title="Supprimer cette piste"
+              aria-label={`Supprimer la piste ${index}`}
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -392,13 +394,13 @@ function TrackItemCard({
         </div>
       </div>
 
-      {/* Track Details: Audio URL/File, Feat, ISRC, Duration */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-1 border-t border-border/50 text-xs">
+      {/* Track Details Grid: Audio URL/File, Feat, ISRC, Duration */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 pt-2 border-t border-border/50 text-xs">
         {/* Audio URL or Cloud Link */}
-        <div className="sm:col-span-2 space-y-1">
+        <div className="sm:col-span-2 lg:col-span-5 space-y-1">
           <div className="flex items-center justify-between text-[11px] text-muted-foreground">
             <span className="flex items-center gap-1 font-medium">
-              <Link2 className="h-3 w-3 text-primary" /> Fichier audio / Lien master
+              <Link2 className="h-3 w-3 text-primary shrink-0" /> Audio / Lien master
             </span>
             <input
               ref={fileInputRef}
@@ -415,15 +417,15 @@ function TrackItemCard({
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="text-[10px] text-primary hover:underline flex items-center gap-1"
+              className="text-[11px] font-semibold text-primary hover:underline flex items-center gap-1"
             >
               {isUploading ? (
                 <>
-                  <Loader2 className="h-2.5 w-2.5 animate-spin" /> Chargement...
+                  <Loader2 className="h-3 w-3 animate-spin" /> Chargement...
                 </>
               ) : (
                 <>
-                  <Upload className="h-2.5 w-2.5" /> Fichier local
+                  <Upload className="h-3 w-3" /> Importer fichier
                 </>
               )}
             </button>
@@ -431,15 +433,15 @@ function TrackItemCard({
           <Input
             value={track.audioUrl}
             onChange={(e) => onUpdate({ audioUrl: e.target.value })}
-            placeholder="Lien Google Drive, Dropbox, WeTransfer ou URL .wav/.mp3"
+            placeholder="Lien Drive, WeTransfer, Dropbox ou .wav/.mp3"
             className="h-9 rounded-lg bg-background text-xs"
           />
         </div>
 
         {/* Featured Artists */}
-        <div className="space-y-1">
+        <div className="sm:col-span-1 lg:col-span-3 space-y-1">
           <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
-            <UserPlus className="h-3 w-3 text-primary" /> Feat. (Invités)
+            <UserPlus className="h-3 w-3 text-primary shrink-0" /> Feat. (Invités)
           </span>
           <Input
             value={track.featuredArtists}
@@ -450,10 +452,10 @@ function TrackItemCard({
         </div>
 
         {/* ISRC Code */}
-        <div className="space-y-1">
+        <div className="sm:col-span-1 lg:col-span-2 space-y-1">
           <div className="flex items-center justify-between text-[11px] text-muted-foreground">
             <span className="flex items-center gap-1 font-medium">
-              <Hash className="h-3 w-3 text-primary" /> Code ISRC
+              <Hash className="h-3 w-3 text-primary shrink-0" /> ISRC
             </span>
             <button
               type="button"
@@ -462,38 +464,40 @@ function TrackItemCard({
                 const randomNum = Math.floor(10000 + Math.random() * 90000);
                 onUpdate({ isrc: `BJ-MRK-${year}-${randomNum}` });
               }}
-              className="text-[10px] text-primary hover:underline"
+              className="text-[10px] font-semibold text-primary hover:underline"
               title="Générer un code ISRC"
             >
-              Générer
+              Auto
             </button>
           </div>
           <Input
             value={track.isrc}
             onChange={(e) => onUpdate({ isrc: e.target.value })}
-            placeholder="BJ-MRK-26-XXXXX"
+            placeholder="BJ-MRK-26-..."
             className="h-9 rounded-lg bg-background font-mono text-xs"
           />
         </div>
-      </div>
 
-      {/* Mobile-only explicit checkbox & duration */}
-      <div className="flex sm:hidden items-center justify-between pt-1">
-        <label className="flex items-center gap-1.5 cursor-pointer text-xs text-muted-foreground">
-          <Checkbox
-            checked={track.explicit}
-            onCheckedChange={(v) => onUpdate({ explicit: Boolean(v) })}
-          />
-          <span className="text-xs font-medium">Contenu explicite</span>
-        </label>
-        <div className="flex items-center gap-1.5">
-          <Clock className="h-3 w-3 text-muted-foreground" />
-          <Input
-            value={track.duration}
-            onChange={(e) => onUpdate({ duration: e.target.value })}
-            placeholder="3:45"
-            className="h-7 w-20 rounded-lg bg-background font-mono text-xs text-center p-0"
-          />
+        {/* Duration (visible on both mobile and desktop!) */}
+        <div className="sm:col-span-2 lg:col-span-2 space-y-1">
+          <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+            <Clock className="h-3 w-3 text-primary shrink-0" /> Durée
+          </span>
+          <div className="flex items-center justify-between gap-3">
+            <Input
+              value={track.duration}
+              onChange={(e) => onUpdate({ duration: e.target.value })}
+              placeholder="Ex : 3:24"
+              className="h-9 rounded-lg bg-background font-mono text-xs flex-1"
+            />
+            <label className="flex sm:hidden items-center gap-1.5 cursor-pointer text-xs text-muted-foreground shrink-0 px-2 py-1.5 rounded-lg border border-border/60 bg-secondary/30">
+              <Checkbox
+                checked={track.explicit}
+                onCheckedChange={(v) => onUpdate({ explicit: Boolean(v) })}
+              />
+              <span className="text-xs font-medium">Explicit</span>
+            </label>
+          </div>
         </div>
       </div>
     </div>

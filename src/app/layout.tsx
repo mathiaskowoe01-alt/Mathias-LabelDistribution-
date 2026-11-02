@@ -17,10 +17,11 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "MR - K Distribution — Distribution musicale indépendante",
+  title: "Mathias Label — Distribution musicale indépendante",
   description:
-    "MR - K Distribution — diffuse votre musique sur Spotify, Apple Music, Deezer, TikTok et 150+ plateformes. Tarifs transparents, accompagnement artiste, paiement direct.",
+    "Mathias Label — diffuse votre musique sur Spotify, Apple Music, Deezer, TikTok et 150+ plateformes. Tarifs transparents, accompagnement artiste, paiement direct.",
   keywords: [
+    "Mathias Label",
     "distribution musicale",
     "label indépendant",
     "Spotify",
@@ -32,22 +33,22 @@ export const metadata: Metadata = {
     "Cotonou",
     "royalties 100%",
   ],
-  authors: [{ name: "MR - K Distribution" }],
+  authors: [{ name: "Mathias Label" }],
   icons: {
-    icon: "/brand/logo.png",
-    apple: "/brand/logo.png",
+    icon: "/brand/logo-mathias.jpg",
+    apple: "/brand/logo-mathias.jpg",
   },
   openGraph: {
-    title: "MR - K Distribution",
+    title: "Mathias Label",
     description:
       "Votre musique partout. Vos royalties à 100 %. Distribution sur 150+ plateformes.",
-    siteName: "MR - K Distribution",
+    siteName: "Mathias Label",
     type: "website",
     locale: "fr_FR",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MR - K Distribution",
+    title: "Mathias Label",
     description: "Votre musique partout. Vos royalties à 100 %.",
   },
 };

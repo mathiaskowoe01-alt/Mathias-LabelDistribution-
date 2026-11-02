@@ -4,8 +4,8 @@ import { Footer } from "@/components/site/footer";
 import { Lock, Eye, Database, UserCheck, Trash2, Mail } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Politique de Confidentialité — MR - K Distribution",
-  description: "Protection des données personnelles et respect de la vie privée chez MR - K Distribution.",
+  title: "Politique de Confidentialité — Mathias Label",
+  description: "Protection des données personnelles et respect de la vie privée chez Mathias Label.",
 };
 
 export default function ConfidentialitePage() {
@@ -23,7 +23,7 @@ export default function ConfidentialitePage() {
               Politique de <span className="text-gradient-gold">Confidentialité</span>
             </h1>
             <p className="mt-3 text-sm sm:text-base text-muted-foreground">
-              Chez MR - K Distribution, la confiance des artistes est fondamentale. Nous protégeons rigoureusement vos données et vos créations.
+              Chez Mathias Label, la confiance des artistes est fondamentale. Nous protégeons rigoureusement vos données et vos créations.
             </p>
           </div>
 

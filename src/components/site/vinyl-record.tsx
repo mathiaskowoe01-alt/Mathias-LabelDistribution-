@@ -53,8 +53,8 @@ export function VinylRecord({
         <circle cx="100" cy="100" r="34" fill="none" stroke="#000000" strokeOpacity="0.25" strokeWidth="1" />
         <circle cx="100" cy="100" r="28" fill="none" stroke="#000000" strokeOpacity="0.18" strokeWidth="0.6" />
 
-        <text x="100" y="96" textAnchor="middle" fontFamily="var(--font-space-grotesk), sans-serif" fontSize="14" fontWeight="700" fill="#1a1a1a" letterSpacing="0.5">MR-K</text>
-        <text x="100" y="110" textAnchor="middle" fontFamily="var(--font-jakarta), sans-serif" fontSize="5" fontWeight="600" fill="#1a1a1a" opacity="0.7" letterSpacing="2">DISTRIBUTION</text>
+        <text x="100" y="96" textAnchor="middle" fontFamily="var(--font-space-grotesk), sans-serif" fontSize="11.5" fontWeight="700" fill="#1a1a1a" letterSpacing="0.5">MATHIAS</text>
+        <text x="100" y="110" textAnchor="middle" fontFamily="var(--font-jakarta), sans-serif" fontSize="6" fontWeight="600" fill="#1a1a1a" opacity="0.75" letterSpacing="2.5">LABEL</text>
 
         <circle cx="100" cy="100" r="2.5" fill="#000000" />
       </svg>

@@ -4,8 +4,8 @@ import { Footer } from "@/components/site/footer";
 import { Building2, ShieldCheck, Mail, MapPin, Server, Globe } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Mentions Légales — MR - K Distribution",
-  description: "Mentions légales, informations éditeur et hébergement de MR - K Distribution.",
+  title: "Mentions Légales — Mathias Label",
+  description: "Mentions légales, informations éditeur et hébergement de Mathias Label.",
 };
 
 export default function MentionsLegalesPage() {
@@ -38,12 +38,12 @@ export default function MentionsLegalesPage() {
                 <h2 className="font-display text-xl font-bold">1. Éditeur de la Plateforme</h2>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                Le site web et la plateforme <strong>MR - K Distribution</strong> sont édités et exploités par le label et distributeur indépendant MR - K :
+                Le site web et la plateforme <strong>Mathias Label</strong> sont édités et exploités par le label et distributeur indépendant Mathias Label :
               </p>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 <li className="flex items-start gap-2.5 p-3 rounded-xl bg-secondary/40 border border-border">
                   <Building2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                  <div><strong>Dénomination :</strong> MR - K Distribution</div>
+                  <div><strong>Dénomination :</strong> Mathias Label</div>
                 </li>
                 <li className="flex items-start gap-2.5 p-3 rounded-xl bg-secondary/40 border border-border">
                   <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
@@ -55,7 +55,7 @@ export default function MentionsLegalesPage() {
                 </li>
                 <li className="flex items-start gap-2.5 p-3 rounded-xl bg-secondary/40 border border-border">
                   <Globe className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                  <div><strong>Directeur de la publication :</strong> Direction MR - K</div>
+                  <div><strong>Directeur de la publication :</strong> Direction Mathias Label</div>
                 </li>
               </ul>
             </section>
@@ -88,10 +88,10 @@ export default function MentionsLegalesPage() {
               </div>
               <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
                 <p>
-                  <strong>Droits sur le site :</strong> L'ensemble des éléments graphiques, marques, logos, animations, code source et contenus du présent site sont la propriété exclusive de MR - K Distribution ou de ses partenaires.
+                  <strong>Droits sur le site :</strong> L'ensemble des éléments graphiques, marques, logos, animations, code source et contenus du présent site sont la propriété exclusive de Mathias Label ou de ses partenaires.
                 </p>
                 <p>
-                  <strong>Propriété des œuvres musicales :</strong> Les artistes utilisant le service MR - K Distribution demeurent <strong>à 100 % propriétaires exclusifs</strong> de leurs enregistrements sonores (masters), compositions, paroles, pochettes et métadonnées. MR - K Distribution agit exclusivement en qualité de mandataire technique de distribution auprès des plateformes de streaming et téléchargement (DSP).
+                  <strong>Propriété des œuvres musicales :</strong> Les artistes utilisant le service Mathias Label demeurent <strong>à 100 % propriétaires exclusifs</strong> de leurs enregistrements sonores (masters), compositions, paroles, pochettes et métadonnées. Mathias Label agit exclusivement en qualité de mandataire technique de distribution auprès des plateformes de streaming et téléchargement (DSP).
                 </p>
               </div>
             </section>

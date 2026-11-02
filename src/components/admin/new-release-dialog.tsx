@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
@@ -26,11 +25,9 @@ import {
   User,
   Disc3,
   Album as AlbumIcon,
-  Sparkles,
   Check,
   ChevronRight,
   ChevronLeft,
-  Calendar,
   CreditCard,
   ShieldCheck,
   Eye,
@@ -40,8 +37,6 @@ import {
   ChevronDown,
   ChevronUp,
   Tag,
-  Radio,
-  FileCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -53,7 +48,6 @@ import { StatusBadge } from "./shared/ui";
 import {
   PLAN_LABELS,
   STATUS_LABELS,
-  PAYMENT_LABELS,
   formatFCFA,
 } from "@/lib/admin-types";
 
@@ -158,6 +152,7 @@ export function NewReleaseDialog({
   const [submitting, setSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
 
   // Form states
   const [plan, setPlan] = useState<PlanKey>("single");
@@ -188,6 +183,7 @@ export function NewReleaseDialog({
 
   function resetForm() {
     setCurrentStep(0);
+    setShowErrors(false);
     setPlan("single");
     setStatus("approved");
     setArtistName("");
@@ -262,6 +258,7 @@ export function NewReleaseDialog({
   }
 
   function applyDemoData() {
+    setShowErrors(false);
     setPlan("single");
     setStatus("approved");
     setArtistName("Mïko Sun");
@@ -271,9 +268,9 @@ export function NewReleaseDialog({
     setArtistCity("Cotonou, Bénin");
     setReleaseTitle("Soleil Levant (Afro-Fusion)");
     setReleaseGenre("Afropop");
-    setReleaseLanguage("Français / Fon");
+    setReleaseLanguage("Français");
     setReleaseDate(new Date().toISOString().split("T")[0]);
-    setCoverArtUrl("/brand/logo.png");
+    setCoverArtUrl("/brand/logo-mathias.jpg");
     setExplicit(false);
     setPaymentMethod("mobile_money");
     setTracks([
@@ -320,10 +317,11 @@ export function NewReleaseDialog({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!artistName.trim() || !artistEmail.trim() || !releaseTitle.trim()) {
+    if (!artistName.trim() || !artistEmail.trim() || !releaseTitle.trim() || !isStep3Valid) {
+      setShowErrors(true);
       toast({
         title: "Champs requis",
-        description: "Veuillez renseigner le nom d'artiste, l'email et le titre du projet.",
+        description: "Veuillez renseigner le nom d'artiste, l'email, le titre du projet et au moins une piste.",
         variant: "destructive",
       });
       return;
@@ -393,21 +391,21 @@ export function NewReleaseDialog({
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
-      <DialogContent className="w-[96vw] sm:w-[94vw] max-w-5xl h-[94vh] sm:h-[88vh] max-h-[94vh] p-0 gap-0 overflow-hidden flex flex-col rounded-2xl border-border bg-background shadow-2xl">
+      <DialogContent className="w-[calc(100vw-1rem)] sm:w-[94vw] max-w-5xl max-h-[92dvh] p-0 gap-0 overflow-hidden flex flex-col rounded-2xl border-border bg-background shadow-2xl">
         {/* Top Header */}
-        <div className="shrink-0 bg-card/80 backdrop-blur-md border-b border-border px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-gold text-black shadow-xs font-bold">
+        <div className="shrink-0 bg-card/80 backdrop-blur-md border-b border-border pl-4 pr-12 sm:pl-6 sm:pr-14 py-3.5 flex items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <span className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-gold text-black shadow-xs font-bold">
               <PlusCircle className="h-5 w-5" />
             </span>
             <div className="min-w-0">
-              <DialogTitle className="font-display text-base sm:text-lg font-bold truncate flex items-center gap-2">
-                Nouvelle sortie studio
-                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-normal uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+              <DialogTitle className="font-display text-sm sm:text-lg font-bold truncate flex items-center gap-2">
+                <span className="truncate">Nouvelle sortie studio</span>
+                <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-normal uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                   <ShieldCheck className="h-3 w-3" /> Distribution directe
                 </span>
               </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground truncate">
+              <DialogDescription className="text-[11px] sm:text-xs text-muted-foreground truncate">
                 Enregistrez un artiste et configurez sa livraison sur les plateformes.
               </DialogDescription>
             </div>
@@ -419,11 +417,12 @@ export function NewReleaseDialog({
               variant="outline"
               size="sm"
               onClick={applyDemoData}
-              className="h-8 rounded-lg text-xs gap-1.5 hidden md:inline-flex hover:border-primary/40"
+              className="h-8 rounded-lg text-xs gap-1.5 px-2.5 sm:px-3 hover:border-primary/40"
               title="Pré-remplir avec un exemple concret pour tester"
             >
-              <Wand2 className="h-3.5 w-3.5 text-primary" />
-              <span>Données de test</span>
+              <Wand2 className="h-3.5 w-3.5 text-primary shrink-0" />
+              <span className="hidden sm:inline">Données de test</span>
+              <span className="sm:hidden">Démo</span>
             </Button>
           </div>
         </div>
@@ -436,7 +435,7 @@ export function NewReleaseDialog({
               Étape {currentStep + 1}/4 :{" "}
               <span className="text-primary font-bold">{STEPS[currentStep].title}</span>
             </span>
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-[11px] font-mono text-muted-foreground">
               {Math.round(((currentStep + 1) / 4) * 100)}%
             </span>
           </div>
@@ -456,7 +455,10 @@ export function NewReleaseDialog({
                 <button
                   key={step.id}
                   type="button"
-                  onClick={() => setCurrentStep(idx)}
+                  onClick={() => {
+                    setShowErrors(false);
+                    setCurrentStep(idx);
+                  }}
                   className={cn(
                     "flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all duration-200 border",
                     isActive
@@ -491,7 +493,7 @@ export function NewReleaseDialog({
         </div>
 
         {/* Mobile Live Preview Toggle Bar */}
-        <div className="lg:hidden shrink-0 bg-card border-b border-border px-4 py-2 flex items-center justify-between gap-3 text-xs">
+        <div className="lg:hidden shrink-0 bg-card border-b border-border px-4 py-2 flex items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-2 min-w-0">
             {coverArtUrl ? (
               <img
@@ -513,8 +515,8 @@ export function NewReleaseDialog({
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="font-mono font-bold text-gradient-gold">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="font-mono font-bold text-gradient-gold text-[11px] sm:text-xs">
               {formatFCFA(activePlanCfg.price)}
             </span>
             <Button
@@ -525,7 +527,7 @@ export function NewReleaseDialog({
               className="h-7 px-2 text-[11px] gap-1"
             >
               <Eye className="h-3.5 w-3.5" />
-              {mobilePreviewOpen ? "Masquer" : "Aperçu"}
+              <span className="hidden xs:inline">{mobilePreviewOpen ? "Masquer" : "Aperçu"}</span>
               {mobilePreviewOpen ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
             </Button>
           </div>
@@ -576,7 +578,7 @@ export function NewReleaseDialog({
               <div className="space-y-6 animate-in fade-in-50 duration-200">
                 <div>
                   <h3 className="font-display text-base font-bold flex items-center gap-2">
-                    <Disc3 className="h-4 w-4 text-primary" /> Choisissez la formule de distribution
+                    <Disc3 className="h-4 w-4 text-primary shrink-0" /> Choisissez la formule de distribution
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Chaque formule inclut une présence mondiale sur 150+ plateformes et 100% des royalties.
@@ -652,23 +654,23 @@ export function NewReleaseDialog({
                 </div>
 
                 {/* Status & Payment Method */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-secondary/30 border border-border">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 sm:p-4 rounded-2xl bg-secondary/30 border border-border">
                   <div className="space-y-2">
                     <Label className="text-xs font-semibold flex items-center gap-1.5">
-                      <Tag className="h-3.5 w-3.5 text-primary" /> Statut initial de la sortie *
+                      <Tag className="h-3.5 w-3.5 text-primary shrink-0" /> Statut initial de la sortie *
                     </Label>
                     <div className="grid grid-cols-3 gap-1.5">
                       {[
-                        { id: "approved", label: "Approuvé", desc: "Validé", color: "emerald" },
-                        { id: "delivered", label: "Livré", desc: "En ligne", color: "sky" },
-                        { id: "pending", label: "En attente", desc: "Attente", color: "amber" },
+                        { id: "approved", label: "Approuvé" },
+                        { id: "delivered", label: "Livré" },
+                        { id: "pending", label: "En attente" },
                       ].map((st) => (
                         <button
                           key={st.id}
                           type="button"
                           onClick={() => setStatus(st.id as any)}
                           className={cn(
-                            "py-2 px-2 rounded-xl border text-center transition-all text-xs font-medium flex flex-col items-center justify-center gap-0.5",
+                            "py-2.5 px-1.5 rounded-xl border text-center transition-all text-xs font-medium flex flex-col items-center justify-center gap-1",
                             status === st.id
                               ? "bg-card border-primary text-foreground shadow-xs ring-1 ring-primary/20"
                               : "border-transparent text-muted-foreground hover:bg-card/50"
@@ -690,10 +692,10 @@ export function NewReleaseDialog({
 
                   <div className="space-y-2">
                     <Label className="text-xs font-semibold flex items-center gap-1.5">
-                      <CreditCard className="h-3.5 w-3.5 text-primary" /> Mode de règlement convenu
+                      <CreditCard className="h-3.5 w-3.5 text-primary shrink-0" /> Mode de règlement convenu
                     </Label>
                     <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                      <SelectTrigger className="h-10 rounded-xl bg-card">
+                      <SelectTrigger className="h-10 w-full rounded-xl bg-card">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -713,7 +715,7 @@ export function NewReleaseDialog({
               <div className="space-y-4 animate-in fade-in-50 duration-200">
                 <div>
                   <h3 className="font-display text-base font-bold flex items-center gap-2">
-                    <User className="h-4 w-4 text-primary" /> Coordonnées de l'artiste ou label
+                    <User className="h-4 w-4 text-primary shrink-0" /> Coordonnées de l&apos;artiste ou label
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Informations nécessaires pour la création du compte artiste et les déclarations de droits.
@@ -722,14 +724,20 @@ export function NewReleaseDialog({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   <div className="space-y-1.5 sm:col-span-2">
-                    <Label className="text-xs font-semibold">Nom d'artiste / Groupe *</Label>
+                    <Label className="text-xs font-semibold">Nom d&apos;artiste / Groupe *</Label>
                     <Input
                       required
                       value={artistName}
                       onChange={(e) => setArtistName(e.target.value)}
                       placeholder="Ex : Mïko Sun, D-Vibe, Orchestre Poly-Rythmo"
-                      className="h-10 rounded-xl bg-card"
+                      aria-invalid={showErrors && artistName.trim().length < 2}
+                      className="h-11 rounded-xl bg-card"
                     />
+                    {showErrors && artistName.trim().length < 2 && (
+                      <p className="text-xs text-rose-500 flex items-center gap-1 mt-1">
+                        <AlertCircle className="h-3 w-3 shrink-0" /> Veuillez renseigner le nom d&apos;artiste (min. 2 caractères).
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -740,38 +748,52 @@ export function NewReleaseDialog({
                       value={artistEmail}
                       onChange={(e) => setArtistEmail(e.target.value)}
                       placeholder="artiste@gmail.com"
-                      className="h-10 rounded-xl bg-card"
+                      aria-invalid={showErrors && !artistEmail.trim().includes("@")}
+                      className="h-11 rounded-xl bg-card"
                     />
+                    {showErrors && !artistEmail.trim().includes("@") && (
+                      <p className="text-xs text-rose-500 flex items-center gap-1 mt-1">
+                        <AlertCircle className="h-3 w-3 shrink-0" /> Adresse email valide requise.
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
                     <Label className="text-xs font-semibold">Téléphone direct *</Label>
                     <Input
                       required
+                      type="tel"
                       value={artistPhone}
                       onChange={(e) => setArtistPhone(e.target.value)}
                       placeholder="+229 97 00 00 00"
-                      className="h-10 rounded-xl bg-card"
+                      aria-invalid={showErrors && artistPhone.trim().length < 6}
+                      className="h-11 rounded-xl bg-card"
                     />
+                    {showErrors && artistPhone.trim().length < 6 && (
+                      <p className="text-xs text-rose-500 flex items-center gap-1 mt-1">
+                        <AlertCircle className="h-3 w-3 shrink-0" /> Numéro de téléphone requis.
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
                     <Label className="text-xs font-semibold">Numéro WhatsApp</Label>
                     <Input
+                      type="tel"
                       value={artistWhatsapp}
                       onChange={(e) => setArtistWhatsapp(e.target.value)}
                       placeholder="+229 97 00 00 00 (optionnel si identique)"
-                      className="h-10 rounded-xl bg-card"
+                      className="h-11 rounded-xl bg-card"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Ville & Pays</Label>
+                    <Label className="text-xs font-semibold">Ville &amp; Pays</Label>
                     <Input
                       value={artistCity}
                       onChange={(e) => setArtistCity(e.target.value)}
                       placeholder="Cotonou, Bénin"
-                      className="h-10 rounded-xl bg-card"
+                      className="h-11 rounded-xl bg-card"
                     />
                   </div>
                 </div>
@@ -779,7 +801,7 @@ export function NewReleaseDialog({
                 <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20 flex items-start gap-2.5 text-xs text-muted-foreground">
                   <ShieldCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <span>
-                    La distribution se fera sous l'étiquette <strong className="text-foreground">MR - K Distribution</strong>. L'artiste conserve 100 % de la propriété intellectuelle de ses masters.
+                    La distribution se fera sous l&apos;étiquette <strong className="text-foreground">Mathias Label</strong>. L&apos;artiste conserve 100 % de la propriété intellectuelle de ses masters.
                   </span>
                 </div>
               </div>
@@ -790,7 +812,7 @@ export function NewReleaseDialog({
               <div className="space-y-4 animate-in fade-in-50 duration-200">
                 <div>
                   <h3 className="font-display text-base font-bold flex items-center gap-2">
-                    <Disc3 className="h-4 w-4 text-primary" /> Titre & Pochette officielle
+                    <Disc3 className="h-4 w-4 text-primary shrink-0" /> Titre &amp; Pochette officielle
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Détails du projet musical affichés sur Spotify, Apple Music, Deezer et TikTok.
@@ -805,14 +827,20 @@ export function NewReleaseDialog({
                       value={releaseTitle}
                       onChange={(e) => setReleaseTitle(e.target.value)}
                       placeholder="Ex : Soleil Levant, Renaissance, Afro-Vibe Vol. 1"
-                      className="h-10 rounded-xl bg-card font-medium"
+                      aria-invalid={showErrors && releaseTitle.trim().length < 1}
+                      className="h-11 rounded-xl bg-card font-medium"
                     />
+                    {showErrors && releaseTitle.trim().length < 1 && (
+                      <p className="text-xs text-rose-500 flex items-center gap-1 mt-1">
+                        <AlertCircle className="h-3 w-3 shrink-0" /> Le titre du projet est obligatoire.
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
                     <Label className="text-xs font-semibold">Genre musical principal *</Label>
                     <Select value={releaseGenre} onValueChange={setReleaseGenre}>
-                      <SelectTrigger className="h-10 rounded-xl bg-card">
+                      <SelectTrigger className="h-11 w-full rounded-xl bg-card">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -828,7 +856,7 @@ export function NewReleaseDialog({
                   <div className="space-y-1.5">
                     <Label className="text-xs font-semibold">Langue principale</Label>
                     <Select value={releaseLanguage} onValueChange={setReleaseLanguage}>
-                      <SelectTrigger className="h-10 rounded-xl bg-card">
+                      <SelectTrigger className="h-11 w-full rounded-xl bg-card">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -842,27 +870,27 @@ export function NewReleaseDialog({
                   </div>
 
                   <div className="space-y-1.5 sm:col-span-2">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap items-center justify-between gap-1.5">
                       <Label className="text-xs font-semibold">Date de mise en ligne souhaitée</Label>
-                      <div className="flex items-center gap-1">
+                      <div className="flex flex-wrap items-center gap-1">
                         <button
                           type="button"
                           onClick={() => setReleaseDateOffset(0)}
-                          className="text-[10px] text-primary hover:underline px-1.5 py-0.5 rounded bg-primary/10"
+                          className="text-[10px] font-semibold text-primary hover:underline px-2 py-0.5 rounded-md bg-primary/10"
                         >
                           Immédiate
                         </button>
                         <button
                           type="button"
                           onClick={() => setReleaseDateOffset(7)}
-                          className="text-[10px] text-muted-foreground hover:text-foreground px-1.5 py-0.5 rounded bg-secondary"
+                          className="text-[10px] text-muted-foreground hover:text-foreground px-2 py-0.5 rounded-md bg-secondary"
                         >
                           +7 jours
                         </button>
                         <button
                           type="button"
                           onClick={() => setReleaseDateOffset(14)}
-                          className="text-[10px] text-muted-foreground hover:text-foreground px-1.5 py-0.5 rounded bg-secondary"
+                          className="text-[10px] text-muted-foreground hover:text-foreground px-2 py-0.5 rounded-md bg-secondary"
                         >
                           +14j (Recommandé)
                         </button>
@@ -872,13 +900,13 @@ export function NewReleaseDialog({
                       type="date"
                       value={releaseDate}
                       onChange={(e) => setReleaseDate(e.target.value)}
-                      className="h-10 rounded-xl bg-card"
+                      className="h-11 rounded-xl bg-card"
                     />
                   </div>
                 </div>
 
                 {/* Explicit content switch */}
-                <div className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-card">
+                <label className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-card cursor-pointer hover:border-primary/30 transition-colors">
                   <div>
                     <div className="text-xs font-semibold">Contenu explicite (Explicit)</div>
                     <div className="text-[11px] text-muted-foreground">
@@ -889,12 +917,12 @@ export function NewReleaseDialog({
                     type="checkbox"
                     checked={explicit}
                     onChange={(e) => setExplicit(e.target.checked)}
-                    className="h-4 w-4 rounded accent-primary cursor-pointer"
+                    className="h-4 w-4 rounded accent-primary cursor-pointer shrink-0"
                   />
-                </div>
+                </label>
 
                 {/* Pochette Manuelle (sans drag-and-drop) */}
-                <div className="pt-2">
+                <div className="pt-1">
                   <ManualCoverInput value={coverArtUrl} onChange={setCoverArtUrl} />
                 </div>
               </div>
@@ -912,6 +940,11 @@ export function NewReleaseDialog({
                   onUpdateTrack={updateTrack}
                   onAutoIsrc={autoFillIsrcs}
                 />
+                {showErrors && !isStep3Valid && (
+                  <p className="text-xs text-rose-500 flex items-center gap-1.5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                    <AlertCircle className="h-4 w-4 shrink-0" /> Veuillez renseigner le titre d&apos;au moins un morceau.
+                  </p>
+                )}
               </div>
             )}
           </form>
@@ -929,13 +962,12 @@ export function NewReleaseDialog({
               </div>
 
               {/* 3D Vinyl Mockup Preview */}
-              <div className="relative group mx-auto max-w-[260px] aspect-square">
+              <div className="relative group mx-auto max-w-[240px] aspect-square">
                 {/* Vinyl Disc poking out */}
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-[90%] w-[90%] rounded-full bg-zinc-950 border-4 border-zinc-900 shadow-xl flex items-center justify-center translate-x-7 group-hover:translate-x-10 transition-transform duration-300">
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-[90%] w-[90%] rounded-full bg-zinc-950 border-4 border-zinc-900 shadow-xl flex items-center justify-center translate-x-6 group-hover:translate-x-9 transition-transform duration-300">
                   <div className="h-10 w-10 rounded-full bg-gradient-gold/30 border border-primary/40 flex items-center justify-center">
                     <div className="h-3 w-3 rounded-full bg-black" />
                   </div>
-                  {/* Subtle vinyl groove lines */}
                   <div className="absolute inset-2 rounded-full border border-white/5 pointer-events-none" />
                   <div className="absolute inset-5 rounded-full border border-white/5 pointer-events-none" />
                 </div>
@@ -955,12 +987,11 @@ export function NewReleaseDialog({
                         Pochette en attente
                       </span>
                       <span className="text-[10px] text-muted-foreground/60 mt-1">
-                        Glissez une image à l'étape 3
+                        Ajoutez une image à l&apos;étape 3
                       </span>
                     </div>
                   )}
 
-                  {/* Explicit Badge */}
                   {explicit && (
                     <span className="absolute bottom-2.5 left-2.5 bg-black/80 backdrop-blur text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase border border-white/20">
                       EXPLICIT
@@ -1022,15 +1053,18 @@ export function NewReleaseDialog({
         </div>
 
         {/* Bottom Actions Bar (Sticky & Responsive) */}
-        <div className="shrink-0 bg-card/90 backdrop-blur-md border-t border-border px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+        <div className="shrink-0 bg-card/90 backdrop-blur-md border-t border-border px-4 sm:px-6 py-3.5 flex items-center justify-between gap-2.5">
           <div>
             {currentStep > 0 ? (
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
-                className="h-10 rounded-xl px-4 gap-1.5 text-xs font-semibold"
+                onClick={() => {
+                  setShowErrors(false);
+                  setCurrentStep((prev) => Math.max(0, prev - 1));
+                }}
+                className="h-10 rounded-xl px-3.5 sm:px-4 gap-1.5 text-xs font-semibold"
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span>Précédent</span>
@@ -1041,7 +1075,7 @@ export function NewReleaseDialog({
                 variant="ghost"
                 size="sm"
                 onClick={handleClose}
-                className="h-10 rounded-xl px-4 text-xs text-muted-foreground"
+                className="h-10 rounded-xl px-3.5 sm:px-4 text-xs text-muted-foreground"
               >
                 Annuler
               </Button>
@@ -1055,11 +1089,13 @@ export function NewReleaseDialog({
                 size="sm"
                 onClick={() => {
                   if (canProceedToNext()) {
+                    setShowErrors(false);
                     setCurrentStep((prev) => prev + 1);
                   } else {
+                    setShowErrors(true);
                     toast({
                       title: "Informations requises",
-                      description: "Complétez les champs nécessaires avant de passer à l'étape suivante.",
+                      description: "Complétez les champs mis en évidence avant de passer à l'étape suivante.",
                       variant: "destructive",
                     });
                   }
@@ -1074,15 +1110,18 @@ export function NewReleaseDialog({
                 type="submit"
                 form="new-release-form"
                 disabled={submitting}
-                className="h-10 rounded-xl px-6 gap-2 text-xs font-bold bg-gradient-gold text-black hover:opacity-90 shadow-md"
+                className="h-10 rounded-xl px-4 sm:px-6 gap-2 text-xs font-bold bg-gradient-gold text-black hover:opacity-90 shadow-md"
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" /> Enregistrement...
+                    <Loader2 className="h-4 w-4 animate-spin shrink-0" />
+                    <span>Enregistrement...</span>
                   </>
                 ) : (
                   <>
-                    <CheckCircle2 className="h-4 w-4" /> Créer la sortie officielle
+                    <CheckCircle2 className="h-4 w-4 shrink-0" />
+                    <span className="hidden xs:inline">Créer la sortie officielle</span>
+                    <span className="xs:hidden">Créer la sortie</span>
                   </>
                 )}
               </Button>

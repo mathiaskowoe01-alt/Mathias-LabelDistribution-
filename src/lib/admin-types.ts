@@ -35,7 +35,7 @@ export type Track = {
 };
 
 export const STATUS_LABELS: Record<string, string> = {
-  pending: "Nouveau",
+  pending: "En attente",
   approved: "Approuvé",
   rejected: "Rejeté",
   delivered: "Livré",
@@ -48,6 +48,7 @@ export const PLAN_LABELS: Record<string, string> = {
 };
 
 export const PAYMENT_LABELS: Record<string, string> = {
+  production_interne: "Production Label",
   mobile_money: "Mobile Money",
   card: "Carte bancaire",
   bank: "Virement",

@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { TrackingDashboard } from "./tracking-dashboard";
 
 export const metadata: Metadata = {
-  title: "Espace Artiste & Suivi de Distribution en Direct | MR - K Distribution",
+  title: "Espace Artiste & Suivi de Distribution en Direct | Mathias Label",
   description:
-    "Suivez en direct l'audit studio, l'attribution des codes ISRC et l'ingestion de vos morceaux sur 150+ plateformes (Spotify, Apple Music, Deezer, TikTok) par MR - K Distribution.",
+    "Suivez en direct l'audit studio, l'attribution des codes ISRC et l'ingestion de vos morceaux sur 150+ plateformes (Spotify, Apple Music, Deezer, TikTok) par Mathias Label.",
 };
 
 export default function SuiviPage() {

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, ArrowRight } from "lucide-react";
 
 const WHATSAPP_NUMBER = "2250157307677";
-const WHATSAPP_MESSAGE = "Bonjour MR - K, je souhaite distribuer ma musique.";
+const WHATSAPP_MESSAGE = "Bonjour Mathias Label, je souhaite distribuer ma musique.";
 
 export function FloatingWhatsApp() {
   const [visible, setVisible] = useState(false);
@@ -28,7 +28,7 @@ export function FloatingWhatsApp() {
             <div className="flex items-center gap-3 p-4 bg-[#25D366] text-white">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur"><MessageCircle className="h-5 w-5" /></span>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-sm">MR - K Distribution</div>
+                <div className="font-semibold text-sm">Mathias Label</div>
                 <div className="text-xs text-white/80 flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" /> En ligne maintenant</div>
               </div>
               <button onClick={() => setOpen(false)} aria-label="Fermer" className="inline-flex items-center justify-center h-7 w-7 rounded-full hover:bg-white/20 transition-colors"><X className="h-4 w-4" /></button>

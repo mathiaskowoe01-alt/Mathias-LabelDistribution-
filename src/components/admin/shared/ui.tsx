@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, ChevronRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export type KpiAccent = "orange" | "gold" | "green" | "purple" | "red";
@@ -53,6 +53,8 @@ export interface KpiCardProps {
     value: string;
     positive?: boolean;
   };
+  onClick?: () => void;
+  ctaLabel?: string;
 }
 
 export function KpiCard({
@@ -62,10 +64,30 @@ export function KpiCard({
   accent = "orange",
   subtitle,
   trend,
+  onClick,
+  ctaLabel = "Voir les détails",
 }: KpiCardProps) {
   const s = ACCENT_STYLES[accent];
   return (
-    <div className="group rounded-2xl border border-border bg-gradient-card p-4 sm:p-5 relative overflow-hidden shadow-xs hover:border-primary/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
+    <div
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
+      className={cn(
+        "group rounded-2xl border border-border bg-gradient-card p-4 sm:p-5 relative overflow-hidden shadow-xs hover:border-primary/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 text-left",
+        onClick && "cursor-pointer active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-primary/40"
+      )}
+    >
       {/* Glow highlight on hover */}
       <div
         className={cn(
@@ -102,6 +124,12 @@ export function KpiCard({
                 </span>
               )}
               {subtitle && <span className="truncate">{subtitle}</span>}
+            </div>
+          )}
+          {onClick && (
+            <div className="mt-2 inline-flex items-center gap-1 text-[11px] font-medium text-primary/80 group-hover:text-primary transition-colors">
+              <span>{ctaLabel}</span>
+              <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
             </div>
           )}
         </div>
@@ -179,13 +207,28 @@ const DOT_STYLES: Record<string, string> = {
   paid: "bg-emerald-500",
 };
 
-export function StatusBadge({ kind, label }: { kind: string; label: string }) {
+export function StatusBadge({
+  kind,
+  label,
+  onClick,
+  title,
+}: {
+  kind: string;
+  label: string;
+  onClick?: (e: React.MouseEvent) => void;
+  title?: string;
+}) {
   const dotColor = DOT_STYLES[kind] || "bg-current";
   return (
     <span
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      title={title}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium tracking-tight",
-        BADGE_STYLES[kind] || "bg-secondary text-foreground border-border"
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium tracking-tight transition-all",
+        BADGE_STYLES[kind] || "bg-secondary text-foreground border-border",
+        onClick && "cursor-pointer hover:scale-105 hover:brightness-110 active:scale-95"
       )}
     >
       <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", dotColor)} />

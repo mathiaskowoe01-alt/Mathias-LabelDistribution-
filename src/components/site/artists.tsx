@@ -141,7 +141,7 @@ export function Artists() {
               Artistes &amp; <span className="text-gradient-gold">Sorties Récentes</span>
             </h2>
             <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
-              Découvrez les singles, EPs et albums diffusés mondialement avec MR - K Distribution. 100 % de royalties pour l'artiste, 150+ plateformes de streaming.
+              Découvrez les singles, EPs et albums diffusés mondialement avec Mathias Label. 100 % de royalties pour l'artiste, 150+ plateformes de streaming.
             </p>
           </div>
 
