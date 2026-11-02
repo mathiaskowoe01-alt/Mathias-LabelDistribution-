@@ -1,10 +1,21 @@
 'use client'
 
+import { useState } from "react";
 import {
   Users, Disc3, Wallet, Music2, Trophy, BarChart3, Inbox,
-  UserPlus, Eye, Plus, ArrowRight, Pencil
+  UserPlus, Eye, Plus, ArrowRight, Pencil, Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { KpiCard, SectionCard, StatusBadge, EmptyStateCard } from "../shared/ui";
 import { PageHeader } from "../admin-shell";
 import { type Submission, formatFCFA } from "@/lib/admin-types";
@@ -15,6 +26,7 @@ export function ArtistesView({
   onAddProductionArtist,
   onSelectArtist,
   onEditArtist,
+  onDeleteArtist,
   onInspectStatus,
   onInspectGenre,
 }: {
@@ -22,9 +34,15 @@ export function ArtistesView({
   onAddProductionArtist?: (prefillEmail?: string | null) => void;
   onSelectArtist?: (email: string, initialStatus?: string) => void;
   onEditArtist?: (artist: ArtistToEdit) => void;
+  onDeleteArtist?: (email: string) => void;
   onInspectStatus?: (status: "all" | "pending" | "approved" | "delivered" | "rejected" | "validated") => void;
   onInspectGenre?: (genre: string) => void;
 }) {
+  const [artistToDelete, setArtistToDelete] = useState<{
+    name: string;
+    email: string;
+    releases: number;
+  } | null>(null);
   const artistMap = new Map<
     string,
     {
@@ -432,6 +450,24 @@ export function ArtistesView({
                             <Plus className="h-3 w-3" /> Sortie
                           </Button>
                         )}
+                        {onDeleteArtist && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                              setArtistToDelete({
+                                name: a.name,
+                                email: a.email,
+                                releases: a.releases,
+                              })
+                            }
+                            className="h-8 px-2 rounded-lg text-xs text-rose-500 border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/15 hover:text-rose-600"
+                            title="Supprimer cet artiste et toutes ses sorties"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -566,6 +602,25 @@ export function ArtistesView({
                                 <span>Sortie</span>
                               </Button>
                             )}
+                            {onDeleteArtist && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  setArtistToDelete({
+                                    name: a.name,
+                                    email: a.email,
+                                    releases: a.releases,
+                                  })
+                                }
+                                className="h-8 px-2.5 rounded-lg text-xs gap-1 text-rose-500 border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/15 hover:text-rose-600"
+                                title="Supprimer cet artiste et toutes ses sorties"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                <span className="hidden xl:inline">Supprimer</span>
+                              </Button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -577,6 +632,46 @@ export function ArtistesView({
           </div>
         </>
       )}
+
+      {/* Confirmation Dialog de suppression d'un Artiste */}
+      <AlertDialog
+        open={!!artistToDelete}
+        onOpenChange={(open) => !open && setArtistToDelete(null)}
+      >
+        <AlertDialogContent className="rounded-2xl border-border bg-card/95 backdrop-blur-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-rose-500">
+              <Trash2 className="h-5 w-5" /> Supprimer l&apos;artiste &laquo; {artistToDelete?.name} &raquo; ?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2 text-sm text-muted-foreground pt-1">
+              <p>
+                Cette action est irréversible. L&apos;artiste et ses{" "}
+                <strong className="text-foreground">
+                  {artistToDelete?.releases} sortie(s)
+                </strong>{" "}
+                (avec tous leurs morceaux, métadonnées et fichiers associés) seront définitivement supprimés de la base de données.
+              </p>
+              <p className="text-xs text-rose-500/90 bg-rose-500/10 p-2.5 rounded-lg border border-rose-500/20">
+                ⚠️ Attention : toutes les demandes, contrats et pistes audio reliés à {artistToDelete?.email} seront également effacés.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl">Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-medium"
+              onClick={() => {
+                if (artistToDelete && onDeleteArtist) {
+                  onDeleteArtist(artistToDelete.email);
+                }
+                setArtistToDelete(null);
+              }}
+            >
+              Confirmer la suppression
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

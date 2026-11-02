@@ -90,7 +90,6 @@ export function DemandesView({
   onDelete,
   onNewRelease,
   onAddProductionArtist,
-  onSimulate,
   onSelectSubmission,
   onOpenNotify,
   onEditSubmission,
@@ -104,7 +103,6 @@ export function DemandesView({
   onDelete: (id: string) => void;
   onNewRelease?: () => void;
   onAddProductionArtist?: () => void;
-  onSimulate?: () => void;
   onSelectSubmission: (s: Submission) => void;
   onOpenNotify: (submission: Submission, type: NotificationType) => void;
   onEditSubmission?: (submission: Submission) => void;
@@ -192,17 +190,6 @@ export function DemandesView({
         subtitle={`${filtered.length} demande${filtered.length > 1 ? "s" : ""} affichée${filtered.length > 1 ? "s" : ""} · Cliquez sur un statut ou un dossier pour accéder aux infos`}
         action={
           <div className="flex flex-wrap items-center gap-2">
-            {onSimulate && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onSimulate}
-                className="h-9 rounded-xl text-xs"
-              >
-                <Sparkles className="h-3.5 w-3.5 mr-1.5 text-primary" />
-                Simuler demande
-              </Button>
-            )}
             {onAddProductionArtist && (
               <Button
                 variant="outline"

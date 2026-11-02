@@ -5,9 +5,19 @@ import {
   Disc3, Music, Album as AlbumIcon, Mail, MessageCircle,
   ExternalLink, Download, Copy, Check, Eye, Inbox,
   ArrowRight, User, MapPin, Phone, Globe, CheckCircle2, Clock,
-  Pencil,
+  Pencil, Trash2,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,6 +52,7 @@ export function SubmissionDetailDialog({
   onOpenNotify,
   onEditSubmission,
   onEditArtist,
+  onDeleteSubmission,
 }: {
   submission: Submission | null;
   onClose: () => void;
@@ -49,8 +60,10 @@ export function SubmissionDetailDialog({
   onOpenNotify: (submission: Submission, type: NotificationType) => void;
   onEditSubmission?: (submission: Submission) => void;
   onEditArtist?: (artist: any) => void;
+  onDeleteSubmission?: (id: string) => void;
 }) {
   const [copiedMeta, setCopiedMeta] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   if (!submission) return null;
 
   let social: Record<string, string> = {};
@@ -135,6 +148,19 @@ export function SubmissionDetailDialog({
                 {copiedMeta ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5 text-primary" />}
                 {copiedMeta ? "Copié !" : "Copier métadonnées"}
               </Button>
+              {onDeleteSubmission && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setConfirmDelete(true)}
+                  className="h-7 text-xs rounded-lg gap-1 text-rose-500 border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/15 hover:text-rose-600"
+                  title="Supprimer définitivement ce projet"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  <span>Supprimer</span>
+                </Button>
+              )}
               <Button asChild size="sm" className="h-7 text-xs rounded-lg bg-[#25D366] hover:bg-[#1ebd5a] text-white font-medium gap-1 shadow-xs">
                 <a
                   href={`https://wa.me/${formatWhatsAppPhone(submission.artistWhatsapp || submission.artistPhone)}?text=${encodeURIComponent(`Bonjour ${submission.artistName}, concernant votre projet « ${submission.releaseTitle} » sur Mathias Label :`)}`}
@@ -359,6 +385,36 @@ export function SubmissionDetailDialog({
             </Button>
           </div>
         </div>
+
+        {/* Confirmation Dialog de suppression d'un projet */}
+        <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+          <AlertDialogContent className="rounded-2xl border-border bg-card/95 backdrop-blur-xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2 text-rose-500">
+                <Trash2 className="h-5 w-5" /> Supprimer le projet &laquo; {submission.releaseTitle} &raquo; ?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="space-y-2 text-sm text-muted-foreground pt-1">
+                <p>
+                  Cette action est irréversible. Le projet de <strong className="text-foreground">{submission.artistName}</strong> et ses <strong className="text-foreground">{submission.tracks.length} morceau(x)</strong> seront définitivement supprimés de la base de données.
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-xl">Annuler</AlertDialogCancel>
+              <AlertDialogAction
+                className="rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-medium"
+                onClick={() => {
+                  const id = submission.id;
+                  setConfirmDelete(false);
+                  onClose();
+                  onDeleteSubmission?.(id);
+                }}
+              >
+                Confirmer la suppression
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DialogContent>
     </Dialog>
   );
@@ -518,6 +574,7 @@ export function SubmissionsListModal({
   onOpenNotify,
   onGoToDemandes,
   onEditSubmission,
+  onDeleteSubmission,
 }: {
   open: boolean;
   title: string;
@@ -530,7 +587,9 @@ export function SubmissionsListModal({
   onOpenNotify: (submission: Submission, type: NotificationType) => void;
   onGoToDemandes?: () => void;
   onEditSubmission?: (submission: Submission) => void;
+  onDeleteSubmission?: (id: string) => void;
 }) {
+  const [subToDelete, setSubToDelete] = useState<Submission | null>(null);
   const totalAmount = useMemo(
     () => submissions.reduce((sum, s) => sum + s.amount, 0),
     [submissions]
@@ -715,6 +774,19 @@ export function SubmissionsListModal({
                       >
                         <MessageCircle className="h-4 w-4" />
                       </a>
+
+                      {onDeleteSubmission && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setSubToDelete(s)}
+                          className="h-8 w-8 p-0 rounded-lg text-rose-500 border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/15 hover:text-rose-600"
+                          title="Supprimer ce projet"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -722,6 +794,36 @@ export function SubmissionsListModal({
             ))
           )}
         </div>
+
+        {/* Confirmation Dialog de suppression d'un projet */}
+        <AlertDialog open={!!subToDelete} onOpenChange={(open) => !open && setSubToDelete(null)}>
+          <AlertDialogContent className="rounded-2xl border-border bg-card/95 backdrop-blur-xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2 text-rose-500">
+                <Trash2 className="h-5 w-5" /> Supprimer le projet &laquo; {subToDelete?.releaseTitle} &raquo; ?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="space-y-2 text-sm text-muted-foreground pt-1">
+                <p>
+                  Cette action est irréversible. Le projet de <strong className="text-foreground">{subToDelete?.artistName}</strong> et ses <strong className="text-foreground">{subToDelete?.tracks.length} morceau(x)</strong> seront définitivement supprimés de la base de données.
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-xl">Annuler</AlertDialogCancel>
+              <AlertDialogAction
+                className="rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-medium"
+                onClick={() => {
+                  if (subToDelete && onDeleteSubmission) {
+                    onDeleteSubmission(subToDelete.id);
+                  }
+                  setSubToDelete(null);
+                }}
+              >
+                Confirmer la suppression
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DialogContent>
     </Dialog>
   );
@@ -740,6 +842,8 @@ export function ArtistDetailModal({
   onOpenNotify,
   onAddProjectForArtist,
   onEditArtist,
+  onDeleteArtist,
+  onDeleteSubmission,
 }: {
   artistEmail: string | null;
   initialStatusFilter?: string;
@@ -750,8 +854,12 @@ export function ArtistDetailModal({
   onOpenNotify: (submission: Submission, type: NotificationType) => void;
   onAddProjectForArtist?: (email: string) => void;
   onEditArtist?: (artist: any) => void;
+  onDeleteArtist?: (email: string) => void;
+  onDeleteSubmission?: (id: string) => void;
 }) {
   const [statusFilter, setStatusFilter] = useState<string>(initialStatusFilter || "all");
+  const [confirmDeleteArtist, setConfirmDeleteArtist] = useState(false);
+  const [subToDelete, setSubToDelete] = useState<Submission | null>(null);
 
   // Update statusFilter when initialStatusFilter changes
   React.useEffect(() => {
@@ -841,6 +949,19 @@ export function ArtistDetailModal({
                 >
                   <Pencil className="h-3.5 w-3.5" />
                   <span>Modifier l'artiste</span>
+                </Button>
+              )}
+              {onDeleteArtist && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setConfirmDeleteArtist(true)}
+                  className="h-8 rounded-full text-xs gap-1.5 text-rose-500 border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/15 hover:text-rose-600"
+                  title="Supprimer définitivement cet artiste et toutes ses sorties"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  <span>Supprimer l'artiste</span>
                 </Button>
               )}
               {onAddProjectForArtist && (
@@ -1009,11 +1130,90 @@ export function ArtistDetailModal({
                       Livrer
                     </Button>
                   )}
+                  {onDeleteSubmission && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSubToDelete(s)}
+                      className="h-8 w-8 p-0 rounded-lg text-rose-500 border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/15 hover:text-rose-600"
+                      title="Supprimer cette sortie"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
                 </div>
               </div>
             ))
           )}
         </div>
+
+        {/* Confirmation Dialog de suppression de l'artiste */}
+        <AlertDialog open={confirmDeleteArtist} onOpenChange={setConfirmDeleteArtist}>
+          <AlertDialogContent className="rounded-2xl border-border bg-card/95 backdrop-blur-xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2 text-rose-500">
+                <Trash2 className="h-5 w-5" /> Supprimer l&apos;artiste &laquo; {primary.artistName} &raquo; ?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="space-y-2 text-sm text-muted-foreground pt-1">
+                <p>
+                  Cette action est irréversible. L&apos;artiste et l&apos;ensemble de ses{" "}
+                  <strong className="text-foreground">{artistSubmissions.length} sortie(s)</strong>{" "}
+                  (avec tous leurs morceaux, métadonnées et fichiers associés) seront définitivement supprimés de la base de données.
+                </p>
+                <p className="text-xs text-rose-500/90 bg-rose-500/10 p-2.5 rounded-lg border border-rose-500/20">
+                  ⚠️ Attention : toutes les demandes, contrats et pistes audio reliés à {primary.artistEmail} seront effacés.
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-xl">Annuler</AlertDialogCancel>
+              <AlertDialogAction
+                className="rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-medium"
+                onClick={() => {
+                  const email = primary.artistEmail;
+                  setConfirmDeleteArtist(false);
+                  onClose();
+                  onDeleteArtist?.(email);
+                }}
+              >
+                Confirmer la suppression
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Confirmation Dialog de suppression d'une sortie spécifique */}
+        <AlertDialog open={!!subToDelete} onOpenChange={(open) => !open && setSubToDelete(null)}>
+          <AlertDialogContent className="rounded-2xl border-border bg-card/95 backdrop-blur-xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2 text-rose-500">
+                <Trash2 className="h-5 w-5" /> Supprimer la sortie &laquo; {subToDelete?.releaseTitle} &raquo; ?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="space-y-2 text-sm text-muted-foreground pt-1">
+                <p>
+                  Cette action est irréversible. Cette sortie et ses{" "}
+                  <strong className="text-foreground">{subToDelete?.tracks.length} morceau(x)</strong>{" "}
+                  seront définitivement supprimés de la base de données.
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-xl">Annuler</AlertDialogCancel>
+              <AlertDialogAction
+                className="rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-medium"
+                onClick={() => {
+                  if (subToDelete && onDeleteSubmission) {
+                    onDeleteSubmission(subToDelete.id);
+                  }
+                  setSubToDelete(null);
+                }}
+              >
+                Confirmer la suppression
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DialogContent>
     </Dialog>
   );

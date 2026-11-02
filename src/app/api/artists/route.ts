@@ -143,3 +143,45 @@ export async function PATCH(req: NextRequest) {
     );
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  if (!(await isAuthed(req))) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
+  try {
+    const { searchParams } = new URL(req.url);
+    const email = searchParams.get("email");
+
+    if (!email || typeof email !== "string" || !email.trim()) {
+      return NextResponse.json(
+        { error: "L'adresse email de l'artiste à supprimer est requise" },
+        { status: 400 }
+      );
+    }
+
+    const trimmedEmail = email.trim();
+
+    // Cascades delete to Track records via foreign key onDelete: Cascade
+    const res = await db.submission.deleteMany({
+      where: {
+        artistEmail: {
+          equals: trimmedEmail,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    return NextResponse.json({
+      ok: true,
+      count: res.count,
+      message: `Artiste et ${res.count} projet(s) supprimés définitivement`,
+    });
+  } catch (e: any) {
+    console.error("DELETE /api/artists error", e);
+    return NextResponse.json(
+      { error: e?.message || "Erreur lors de la suppression de l'artiste" },
+      { status: 500 }
+    );
+  }
+}

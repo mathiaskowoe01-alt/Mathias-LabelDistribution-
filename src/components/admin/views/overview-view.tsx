@@ -10,7 +10,6 @@ export function OverviewView({
   submissions,
   onNewRelease,
   onAddProductionArtist,
-  onSimulate,
   onSyncShowcase,
   isSeeding = false,
   onSelectSubmission,
@@ -24,7 +23,6 @@ export function OverviewView({
   submissions: Submission[];
   onNewRelease?: () => void;
   onAddProductionArtist?: () => void;
-  onSimulate?: () => void;
   onSyncShowcase?: () => void;
   isSeeding?: boolean;
   onSelectSubmission?: (s: Submission) => void;
@@ -108,18 +106,6 @@ export function OverviewView({
               >
                 {isSeeding ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5 mr-1.5" />}
                 Sync Vitrine
-              </Button>
-            )}
-            {onSimulate && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onSimulate}
-                disabled={isSeeding}
-                className="h-9 rounded-xl text-xs"
-              >
-                <Sparkles className="h-3.5 w-3.5 mr-1.5 text-primary" />
-                Simuler demande
               </Button>
             )}
             {onAddProductionArtist && (
@@ -235,17 +221,6 @@ export function OverviewView({
               >
                 {isSeeding ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
                 Synchroniser les 3 artistes de la vitrine
-              </Button>
-            )}
-            {onSimulate && (
-              <Button
-                variant="outline"
-                onClick={onSimulate}
-                disabled={isSeeding}
-                className="rounded-full px-5"
-              >
-                <Sparkles className="h-4 w-4 mr-2 text-primary" />
-                Simuler une demande de test
               </Button>
             )}
             {onNewRelease && (

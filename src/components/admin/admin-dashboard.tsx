@@ -115,28 +115,6 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     }
   }
 
-  async function handleSimulate() {
-    setIsSeeding(true);
-    try {
-      const res = await fetch("/api/submissions/seed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "simulate_one" }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Erreur simulation");
-      toast({
-        title: "Demande de test générée !",
-        description: data.message || "Une nouvelle soumission a été ajoutée.",
-      });
-      await load();
-    } catch (e: any) {
-      toast({ title: "Erreur", description: e.message || "Échec simulation", variant: "destructive" });
-    } finally {
-      setIsSeeding(false);
-    }
-  }
-
   async function updateStatus(id: string, status: string) {
     try {
       const res = await fetch(`/api/submissions/${id}`, {
@@ -156,10 +134,46 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   async function deleteSubmission(id: string) {
     try {
       const res = await fetch(`/api/submissions/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Erreur");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || "Erreur");
       setSubmissions((prev) => prev.filter((s) => s.id !== id));
-    } catch {
-      toast({ title: "Erreur", description: "Suppression impossible.", variant: "destructive" });
+      if (selectedSubmissionId === id) {
+        setSelectedSubmissionId(null);
+      }
+      toast({
+        title: "Projet supprimé",
+        description: "La sortie a été supprimée avec succès.",
+      });
+    } catch (e: any) {
+      toast({
+        title: "Erreur",
+        description: e?.message || "Suppression impossible.",
+        variant: "destructive",
+      });
+    }
+  }
+
+  async function deleteArtist(email: string) {
+    try {
+      const res = await fetch(`/api/artists?email=${encodeURIComponent(email)}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Erreur de suppression");
+      setSubmissions((prev) => prev.filter((s) => s.artistEmail.toLowerCase() !== email.toLowerCase()));
+      if (selectedArtist?.email.toLowerCase() === email.toLowerCase()) {
+        setSelectedArtist(null);
+      }
+      toast({
+        title: "Artiste supprimé",
+        description: data.message || "L'artiste et toutes ses sorties ont été supprimés.",
+      });
+    } catch (e: any) {
+      toast({
+        title: "Erreur",
+        description: e.message || "Impossible de supprimer cet artiste.",
+        variant: "destructive",
+      });
     }
   }
 
@@ -304,7 +318,6 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             submissions={submissions}
             onNewRelease={() => setIsNewReleaseOpen(true)}
             onAddProductionArtist={() => handleOpenProductionArtist(null)}
-            onSimulate={handleSimulate}
             onSyncShowcase={handleSyncShowcase}
             isSeeding={isSeeding}
             onSelectSubmission={(s) => setSelectedSubmissionId(s.id)}
@@ -325,7 +338,6 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             onDelete={deleteSubmission}
             onNewRelease={() => setIsNewReleaseOpen(true)}
             onAddProductionArtist={() => handleOpenProductionArtist(null)}
-            onSimulate={handleSimulate}
             onSelectSubmission={(s) => setSelectedSubmissionId(s.id)}
             onOpenNotify={(submission, type) => setNotifyTarget({ submission, type })}
             onEditSubmission={(s) => setSubmissionToEdit(s)}
@@ -347,6 +359,7 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             onAddProductionArtist={(prefillEmail) => handleOpenProductionArtist(prefillEmail)}
             onSelectArtist={(email, initialStatus) => setSelectedArtist({ email, initialStatus })}
             onEditArtist={(artist) => setArtistToEdit(artist)}
+            onDeleteArtist={deleteArtist}
             onInspectStatus={(status) => setListFilter({ kind: "status", status })}
             onInspectGenre={(genre) => setListFilter({ kind: "genre", genre })}
           />
@@ -379,6 +392,7 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         onClose={() => setListFilter(null)}
         onSelectSubmission={(s) => setSelectedSubmissionId(s.id)}
         onUpdateStatus={updateStatus}
+        onDeleteSubmission={deleteSubmission}
         onOpenNotify={(submission, type) => setNotifyTarget({ submission, type })}
         onEditSubmission={(s) => setSubmissionToEdit(s)}
         onGoToDemandes={() => {
@@ -398,6 +412,8 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         onClose={() => setSelectedArtist(null)}
         onSelectSubmission={(s) => setSelectedSubmissionId(s.id)}
         onUpdateStatus={updateStatus}
+        onDeleteArtist={deleteArtist}
+        onDeleteSubmission={deleteSubmission}
         onOpenNotify={(submission, type) => setNotifyTarget({ submission, type })}
         onAddProjectForArtist={(email) => handleOpenProductionArtist(email)}
         onEditArtist={(artist) => setArtistToEdit(artist)}
@@ -408,6 +424,7 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         submission={selectedSubmission}
         onClose={() => setSelectedSubmissionId(null)}
         onUpdateStatus={updateStatus}
+        onDeleteSubmission={deleteSubmission}
         onOpenNotify={(submission, type) => setNotifyTarget({ submission, type })}
         onEditSubmission={(s) => setSubmissionToEdit(s)}
         onEditArtist={(artist) => setArtistToEdit(artist)}
