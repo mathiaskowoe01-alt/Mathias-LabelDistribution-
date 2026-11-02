@@ -4,6 +4,7 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import {
   Search, Trash2, ChevronRight, ChevronDown, Inbox, Mail,
   MessageCircle, Disc3, Sparkles, PlusCircle, Eye, Download, UserPlus,
+  Pencil,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -92,6 +93,7 @@ export function DemandesView({
   onSimulate,
   onSelectSubmission,
   onOpenNotify,
+  onEditSubmission,
   initialStatusFilter = "all",
   initialPlanFilter = "all",
 }: {
@@ -105,6 +107,7 @@ export function DemandesView({
   onSimulate?: () => void;
   onSelectSubmission: (s: Submission) => void;
   onOpenNotify: (submission: Submission, type: NotificationType) => void;
+  onEditSubmission?: (submission: Submission) => void;
   initialStatusFilter?: string;
   initialPlanFilter?: string;
 }) {
@@ -422,6 +425,19 @@ export function DemandesView({
                     <Eye className="h-3.5 w-3.5 text-primary" />
                     Infos
                   </Button>
+                  {onEditSubmission && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onEditSubmission(s)}
+                      className="h-8 px-2.5 rounded-lg text-xs gap-1 text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15"
+                      title="Modifier les informations de ce projet"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                      Modifier
+                    </Button>
+                  )}
                   {s.status === "pending" && (
                     <Button
                       type="button"
@@ -610,6 +626,23 @@ export function DemandesView({
                               <Eye className="h-3.5 w-3.5 text-primary" />
                               <span className="hidden xl:inline font-medium">Infos</span>
                             </Button>
+
+                            {onEditSubmission && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onEditSubmission(s);
+                                }}
+                                className="h-8 px-2.5 rounded-lg text-xs gap-1 text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15"
+                                title="Modifier ce projet et ses informations"
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                                <span className="hidden xl:inline font-medium">Modifier</span>
+                              </Button>
+                            )}
 
                             <a
                               href={`https://wa.me/${formatWhatsAppPhone(s.artistWhatsapp || s.artistPhone)}?text=${encodeURIComponent(`Bonjour ${s.artistName}, concernant votre sortie « ${s.releaseTitle} » sur Mathias Label :`)}`}

@@ -1,21 +1,27 @@
 'use client'
 
-import { Users, Disc3, Wallet, Music2, Trophy, BarChart3, Inbox, UserPlus, Eye, Plus, ArrowRight } from "lucide-react";
+import {
+  Users, Disc3, Wallet, Music2, Trophy, BarChart3, Inbox,
+  UserPlus, Eye, Plus, ArrowRight, Pencil
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { KpiCard, SectionCard, StatusBadge, EmptyStateCard } from "../shared/ui";
 import { PageHeader } from "../admin-shell";
 import { type Submission, formatFCFA } from "@/lib/admin-types";
+import { type ArtistToEdit } from "../edit-artist-dialog";
 
 export function ArtistesView({
   submissions,
   onAddProductionArtist,
   onSelectArtist,
+  onEditArtist,
   onInspectStatus,
   onInspectGenre,
 }: {
   submissions: Submission[];
   onAddProductionArtist?: (prefillEmail?: string | null) => void;
   onSelectArtist?: (email: string, initialStatus?: string) => void;
+  onEditArtist?: (artist: ArtistToEdit) => void;
   onInspectStatus?: (status: "all" | "pending" | "approved" | "delivered" | "rejected" | "validated") => void;
   onInspectGenre?: (genre: string) => void;
 }) {
@@ -25,7 +31,11 @@ export function ArtistesView({
       name: string;
       email: string;
       phone: string;
+      whatsapp: string | null;
       city: string | null;
+      bio: string | null;
+      photo: string | null;
+      social: Record<string, string>;
       revenue: number;
       tracks: number;
       releases: number;
@@ -38,11 +48,20 @@ export function ArtistesView({
 
   submissions.forEach((s) => {
     const key = s.artistEmail.toLowerCase();
+    let social: Record<string, string> = {};
+    try {
+      if (s.socialLinks) social = JSON.parse(s.socialLinks);
+    } catch {}
+
     const existing = artistMap.get(key) || {
       name: s.artistName,
       email: s.artistEmail,
       phone: s.artistPhone,
-      city: s.artistCity,
+      whatsapp: s.artistWhatsapp || null,
+      city: s.artistCity || null,
+      bio: s.artistBio || null,
+      photo: s.artistPhoto || null,
+      social: social,
       revenue: 0,
       tracks: 0,
       releases: 0,
@@ -51,6 +70,15 @@ export function ArtistesView({
       delivered: 0,
       genres: new Set<string>(),
     };
+
+    if (s.artistWhatsapp && !existing.whatsapp) existing.whatsapp = s.artistWhatsapp;
+    if (s.artistBio && !existing.bio) existing.bio = s.artistBio;
+    if (s.artistCity && !existing.city) existing.city = s.artistCity;
+    if (s.artistPhoto && !existing.photo) existing.photo = s.artistPhoto;
+    if (Object.keys(social).length > 0 && Object.keys(existing.social).length === 0) {
+      existing.social = social;
+    }
+
     existing.revenue += s.amount;
     existing.tracks += s.tracks.length;
     existing.releases += 1;
@@ -86,7 +114,7 @@ export function ArtistesView({
         subtitle={
           isEmpty
             ? "Aucun artiste enregistré pour le moment"
-            : `${artists.length} artiste${artists.length > 1 ? "s" : ""} · ${totalTracks} titres distribués · Cliquez sur un artiste ou un statut pour voir ses infos`
+            : `${artists.length} artiste${artists.length > 1 ? "s" : ""} · ${totalTracks} titres distribués · Cliquez sur Modifier pour éditer les infos d'un artiste`
         }
         action={
           onAddProductionArtist && (
@@ -306,9 +334,17 @@ export function ArtistesView({
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary border border-border font-display font-bold text-xs">
-                          {a.name.slice(0, 2).toUpperCase()}
-                        </span>
+                        {a.photo ? (
+                          <img
+                            src={a.photo}
+                            alt={a.name}
+                            className="h-10 w-10 shrink-0 rounded-xl object-cover border border-border"
+                          />
+                        ) : (
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary border border-border font-display font-bold text-xs">
+                            {a.name.slice(0, 2).toUpperCase()}
+                          </span>
+                        )}
                         <div className="min-w-0">
                           <div className="font-semibold text-sm truncate">{a.name}</div>
                           <div className="text-xs text-muted-foreground truncate">{a.email}</div>
@@ -357,17 +393,41 @@ export function ArtistesView({
                           size="sm"
                           variant="outline"
                           onClick={() => onSelectArtist?.(a.email)}
-                          className="h-7 px-2.5 rounded-lg text-xs gap-1"
+                          className="h-8 px-2.5 rounded-lg text-xs gap-1"
                         >
                           <Eye className="h-3 w-3 text-primary" /> Infos
                         </Button>
+                        {onEditArtist && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                              onEditArtist({
+                                name: a.name,
+                                email: a.email,
+                                phone: a.phone,
+                                whatsapp: a.whatsapp,
+                                city: a.city,
+                                bio: a.bio,
+                                photo: a.photo,
+                                social: a.social,
+                                releasesCount: a.releases,
+                              })
+                            }
+                            className="h-8 px-2.5 rounded-lg text-xs gap-1 text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15"
+                            title="Modifier les informations de cet artiste"
+                          >
+                            <Pencil className="h-3 w-3" /> Modifier
+                          </Button>
+                        )}
                         {onAddProductionArtist && (
                           <Button
                             type="button"
                             size="sm"
                             variant="outline"
                             onClick={() => onAddProductionArtist(a.email)}
-                            className="h-7 px-2.5 rounded-lg text-xs gap-1 text-primary border-primary/30"
+                            className="h-8 px-2.5 rounded-lg text-xs gap-1 text-primary border-primary/30"
                           >
                             <Plus className="h-3 w-3" /> Sortie
                           </Button>
@@ -401,9 +461,17 @@ export function ArtistesView({
                       >
                         <td className="px-3 py-3">
                           <div className="flex items-center gap-2.5">
-                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary border border-border font-display font-bold text-xs">
-                              {a.name.slice(0, 2).toUpperCase()}
-                            </span>
+                            {a.photo ? (
+                              <img
+                                src={a.photo}
+                                alt={a.name}
+                                className="h-9 w-9 shrink-0 rounded-xl object-cover border border-border"
+                              />
+                            ) : (
+                              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary border border-border font-display font-bold text-xs">
+                                {a.name.slice(0, 2).toUpperCase()}
+                              </span>
+                            )}
                             <div className="min-w-0">
                               <div className="font-medium truncate">{a.name}</div>
                               <div className="text-xs text-muted-foreground truncate">{a.email}</div>
@@ -454,11 +522,37 @@ export function ArtistesView({
                               size="sm"
                               variant="outline"
                               onClick={() => onSelectArtist?.(a.email)}
-                              className="h-8 px-2.5 rounded-lg text-xs gap-1"
+                              className="h-8 px-2.5 rounded-lg text-xs gap-1 hover:border-primary/50"
+                              title="Voir la fiche artiste complète"
                             >
                               <Eye className="h-3.5 w-3.5 text-primary" />
                               <span>Infos</span>
                             </Button>
+                            {onEditArtist && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  onEditArtist({
+                                    name: a.name,
+                                    email: a.email,
+                                    phone: a.phone,
+                                    whatsapp: a.whatsapp,
+                                    city: a.city,
+                                    bio: a.bio,
+                                    photo: a.photo,
+                                    social: a.social,
+                                    releasesCount: a.releases,
+                                  })
+                                }
+                                className="h-8 px-2.5 rounded-lg text-xs gap-1.5 text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15"
+                                title="Modifier les informations de cet artiste"
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                                <span>Modifier</span>
+                              </Button>
+                            )}
                             {onAddProductionArtist && (
                               <Button
                                 type="button"

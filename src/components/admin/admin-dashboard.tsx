@@ -9,6 +9,8 @@ import { RevenueView } from "./views/revenue-view";
 import { ArtistesView } from "./views/artistes-view";
 import { NewReleaseDialog } from "./new-release-dialog";
 import { AddProductionArtistDialog } from "./add-production-artist-dialog";
+import { EditArtistDialog, type ArtistToEdit } from "./edit-artist-dialog";
+import { EditSubmissionDialog } from "./edit-submission-dialog";
 import {
   SubmissionDetailDialog,
   WhatsAppNotifyDialog,
@@ -47,6 +49,8 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [notifyTarget, setNotifyTarget] = useState<{ submission: Submission; type: NotificationType } | null>(null);
   const [listFilter, setListFilter] = useState<ListModalFilter | null>(null);
   const [selectedArtist, setSelectedArtist] = useState<{ email: string; initialStatus?: string } | null>(null);
+  const [artistToEdit, setArtistToEdit] = useState<ArtistToEdit | null>(null);
+  const [submissionToEdit, setSubmissionToEdit] = useState<Submission | null>(null);
 
   const selectedSubmission = useMemo(
     () => submissions.find((s) => s.id === selectedSubmissionId) || null,
@@ -324,6 +328,7 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             onSimulate={handleSimulate}
             onSelectSubmission={(s) => setSelectedSubmissionId(s.id)}
             onOpenNotify={(submission, type) => setNotifyTarget({ submission, type })}
+            onEditSubmission={(s) => setSubmissionToEdit(s)}
             initialStatusFilter={demandesStatusFilter}
             initialPlanFilter={demandesPlanFilter}
           />
@@ -341,6 +346,7 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             submissions={submissions}
             onAddProductionArtist={(prefillEmail) => handleOpenProductionArtist(prefillEmail)}
             onSelectArtist={(email, initialStatus) => setSelectedArtist({ email, initialStatus })}
+            onEditArtist={(artist) => setArtistToEdit(artist)}
             onInspectStatus={(status) => setListFilter({ kind: "status", status })}
             onInspectGenre={(genre) => setListFilter({ kind: "genre", genre })}
           />
@@ -374,6 +380,7 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         onSelectSubmission={(s) => setSelectedSubmissionId(s.id)}
         onUpdateStatus={updateStatus}
         onOpenNotify={(submission, type) => setNotifyTarget({ submission, type })}
+        onEditSubmission={(s) => setSubmissionToEdit(s)}
         onGoToDemandes={() => {
           if (listModalConfig) {
             setDemandesStatusFilter(listModalConfig.targetStatus === "validated" ? "approved" : listModalConfig.targetStatus);
@@ -393,6 +400,7 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         onUpdateStatus={updateStatus}
         onOpenNotify={(submission, type) => setNotifyTarget({ submission, type })}
         onAddProjectForArtist={(email) => handleOpenProductionArtist(email)}
+        onEditArtist={(artist) => setArtistToEdit(artist)}
       />
 
       {/* Modale Fiche Complète d'une Sortie */}
@@ -401,6 +409,24 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         onClose={() => setSelectedSubmissionId(null)}
         onUpdateStatus={updateStatus}
         onOpenNotify={(submission, type) => setNotifyTarget({ submission, type })}
+        onEditSubmission={(s) => setSubmissionToEdit(s)}
+        onEditArtist={(artist) => setArtistToEdit(artist)}
+      />
+
+      {/* Modale Modifier un Artiste */}
+      <EditArtistDialog
+        open={!!artistToEdit}
+        artist={artistToEdit}
+        onClose={() => setArtistToEdit(null)}
+        onSuccess={load}
+      />
+
+      {/* Modale Modifier un Projet */}
+      <EditSubmissionDialog
+        open={!!submissionToEdit}
+        submission={submissionToEdit}
+        onClose={() => setSubmissionToEdit(null)}
+        onSuccess={load}
       />
 
       {/* Modale Notification WhatsApp */}

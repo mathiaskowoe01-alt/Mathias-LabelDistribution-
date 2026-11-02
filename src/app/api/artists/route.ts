@@ -1,5 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
+
+async function isAuthed(req: NextRequest): Promise<boolean> {
+  const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
+  return verifySessionToken(token);
+}
 
 export async function GET() {
   try {
@@ -54,6 +60,85 @@ export async function GET() {
     console.error("GET /api/artists error", e);
     return NextResponse.json(
       { error: "Erreur lors de la récupération des artistes", artists: [] },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  if (!(await isAuthed(req))) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+    const {
+      currentEmail,
+      artistName,
+      artistEmail,
+      artistPhone,
+      artistWhatsapp,
+      artistCity,
+      artistBio,
+      artistPhoto,
+      socialLinks,
+    } = body;
+
+    if (!currentEmail || typeof currentEmail !== "string") {
+      return NextResponse.json(
+        { error: "L'adresse email de référence de l'artiste est requise" },
+        { status: 400 }
+      );
+    }
+
+    const updateData: Record<string, any> = {};
+
+    if (typeof artistName === "string" && artistName.trim().length > 0) {
+      updateData.artistName = artistName.trim();
+    }
+    if (typeof artistEmail === "string" && artistEmail.trim().length > 0) {
+      updateData.artistEmail = artistEmail.trim().toLowerCase();
+    }
+    if (typeof artistPhone === "string") {
+      updateData.artistPhone = artistPhone.trim();
+    }
+    if (artistWhatsapp !== undefined) {
+      updateData.artistWhatsapp = artistWhatsapp ? String(artistWhatsapp).trim() : null;
+    }
+    if (artistCity !== undefined) {
+      updateData.artistCity = artistCity ? String(artistCity).trim() : null;
+    }
+    if (artistBio !== undefined) {
+      updateData.artistBio = artistBio ? String(artistBio).trim() : null;
+    }
+    if (artistPhoto !== undefined) {
+      updateData.artistPhoto = artistPhoto ? String(artistPhoto).trim() : null;
+    }
+    if (socialLinks !== undefined) {
+      updateData.socialLinks =
+        typeof socialLinks === "string" ? socialLinks : JSON.stringify(socialLinks);
+    }
+
+    // In Prisma with PostgreSQL, update all submissions for this artist
+    const res = await db.submission.updateMany({
+      where: {
+        artistEmail: {
+          equals: currentEmail.trim(),
+          mode: "insensitive",
+        },
+      },
+      data: updateData,
+    });
+
+    return NextResponse.json({
+      ok: true,
+      count: res.count,
+      message: `${res.count} sortie(s) synchronisée(s) pour cet artiste`,
+    });
+  } catch (e: any) {
+    console.error("PATCH /api/artists error", e);
+    return NextResponse.json(
+      { error: e?.message || "Erreur lors de la mise à jour de l'artiste" },
       { status: 500 }
     );
   }

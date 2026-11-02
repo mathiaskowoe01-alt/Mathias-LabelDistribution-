@@ -37,14 +37,47 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await req.json();
-    const status = String(body.status || "");
-    if (!["pending", "approved", "rejected", "delivered"].includes(status)) {
+
+    const allowedFields = [
+      "status",
+      "plan",
+      "amount",
+      "artistName",
+      "artistEmail",
+      "artistPhone",
+      "artistWhatsapp",
+      "artistBio",
+      "artistCity",
+      "artistPhoto",
+      "socialLinks",
+      "releaseTitle",
+      "releaseGenre",
+      "releaseDate",
+      "releaseLanguage",
+      "coverArtUrl",
+      "explicit",
+      "paymentMethod",
+    ];
+
+    const data: Record<string, any> = {};
+    for (const key of allowedFields) {
+      if (body[key] !== undefined) {
+        data[key] = body[key];
+      }
+    }
+
+    if (data.status && !["pending", "approved", "rejected", "delivered"].includes(data.status)) {
       return NextResponse.json({ error: "Statut invalide" }, { status: 400 });
     }
+
+    if (data.artistEmail && typeof data.artistEmail === "string") {
+      data.artistEmail = data.artistEmail.trim().toLowerCase();
+    }
+
     const updated = await db.submission.update({
       where: { id },
-      data: { status },
-      include: { tracks: true },
+      data,
+      include: { tracks: { orderBy: { position: "asc" } } },
     });
     return NextResponse.json({ submission: updated });
   } catch (e) {

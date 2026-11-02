@@ -5,6 +5,7 @@ import {
   Disc3, Music, Album as AlbumIcon, Mail, MessageCircle,
   ExternalLink, Download, Copy, Check, Eye, Inbox,
   ArrowRight, User, MapPin, Phone, Globe, CheckCircle2, Clock,
+  Pencil,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -39,11 +40,15 @@ export function SubmissionDetailDialog({
   onClose,
   onUpdateStatus,
   onOpenNotify,
+  onEditSubmission,
+  onEditArtist,
 }: {
   submission: Submission | null;
   onClose: () => void;
   onUpdateStatus: (id: string, status: string) => void;
   onOpenNotify: (submission: Submission, type: NotificationType) => void;
+  onEditSubmission?: (submission: Submission) => void;
+  onEditArtist?: (artist: any) => void;
 }) {
   const [copiedMeta, setCopiedMeta] = useState(false);
   if (!submission) return null;
@@ -103,6 +108,22 @@ export function SubmissionDetailDialog({
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <StatusBadge kind={submission.status} label={STATUS_LABELS[submission.status] || submission.status} />
+              {onEditSubmission && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    onClose();
+                    onEditSubmission(submission);
+                  }}
+                  className="h-7 text-xs rounded-lg gap-1 text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15"
+                  title="Modifier les détails de cette sortie"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  <span>Modifier la sortie</span>
+                </Button>
+              )}
               <Button
                 type="button"
                 variant="outline"
@@ -146,18 +167,48 @@ export function SubmissionDetailDialog({
             )}
           </div>
 
-          <DetailSection title="Informations artiste">
-            <DetailRow label="Nom" value={submission.artistName} />
-            <DetailRow label="Email" value={submission.artistEmail} />
-            <DetailRow label="Téléphone" value={submission.artistPhone} />
-            {submission.artistWhatsapp && <DetailRow label="WhatsApp" value={submission.artistWhatsapp} />}
-            {submission.artistCity && <DetailRow label="Ville" value={submission.artistCity} />}
-            {submission.artistBio && <DetailRow label="Bio" value={submission.artistBio} />}
-            {social.instagram && <DetailRow label="Instagram" value={social.instagram} />}
-            {social.tiktok && <DetailRow label="TikTok" value={social.tiktok} />}
-            {social.youtube && <DetailRow label="YouTube" value={social.youtube} />}
-            {social.spotify && <DetailRow label="Spotify" value={social.spotify} />}
-          </DetailSection>
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Informations artiste</h3>
+              {onEditArtist && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    onClose();
+                    onEditArtist({
+                      name: submission.artistName,
+                      email: submission.artistEmail,
+                      phone: submission.artistPhone,
+                      whatsapp: submission.artistWhatsapp,
+                      city: submission.artistCity,
+                      bio: submission.artistBio,
+                      photo: submission.artistPhoto,
+                      social,
+                    });
+                  }}
+                  className="h-7 px-2.5 text-xs gap-1.5 text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15 rounded-lg"
+                  title="Modifier les coordonnées et informations de cet artiste"
+                >
+                  <Pencil className="h-3 w-3" />
+                  <span>Modifier l'artiste</span>
+                </Button>
+              )}
+            </div>
+            <div className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden">
+              <DetailRow label="Nom" value={submission.artistName} />
+              <DetailRow label="Email" value={submission.artistEmail} />
+              <DetailRow label="Téléphone" value={submission.artistPhone} />
+              {submission.artistWhatsapp && <DetailRow label="WhatsApp" value={submission.artistWhatsapp} />}
+              {submission.artistCity && <DetailRow label="Ville" value={submission.artistCity} />}
+              {submission.artistBio && <DetailRow label="Bio" value={submission.artistBio} />}
+              {social.instagram && <DetailRow label="Instagram" value={social.instagram} />}
+              {social.tiktok && <DetailRow label="TikTok" value={social.tiktok} />}
+              {social.youtube && <DetailRow label="YouTube" value={social.youtube} />}
+              {social.spotify && <DetailRow label="Spotify" value={social.spotify} />}
+            </div>
+          </div>
 
           <DetailSection title="Informations projet">
             {submission.coverArtUrl && (
@@ -465,6 +516,7 @@ export function SubmissionsListModal({
   onUpdateStatus,
   onOpenNotify,
   onGoToDemandes,
+  onEditSubmission,
 }: {
   open: boolean;
   title: string;
@@ -476,6 +528,7 @@ export function SubmissionsListModal({
   onUpdateStatus: (id: string, status: string) => void;
   onOpenNotify: (submission: Submission, type: NotificationType) => void;
   onGoToDemandes?: () => void;
+  onEditSubmission?: (submission: Submission) => void;
 }) {
   const totalAmount = useMemo(
     () => submissions.reduce((sum, s) => sum + s.amount, 0),
@@ -604,6 +657,23 @@ export function SubmissionsListModal({
                         <span>Infos complètes</span>
                       </Button>
 
+                      {onEditSubmission && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            onClose();
+                            onEditSubmission(s);
+                          }}
+                          className="h-8 px-2.5 rounded-lg text-xs gap-1 text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15"
+                          title="Modifier les informations de cette demande"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                          <span>Modifier</span>
+                        </Button>
+                      )}
+
                       {s.status === "pending" && (
                         <Button
                           type="button"
@@ -668,6 +738,7 @@ export function ArtistDetailModal({
   onUpdateStatus,
   onOpenNotify,
   onAddProjectForArtist,
+  onEditArtist,
 }: {
   artistEmail: string | null;
   initialStatusFilter?: string;
@@ -677,6 +748,7 @@ export function ArtistDetailModal({
   onUpdateStatus: (id: string, status: string) => void;
   onOpenNotify: (submission: Submission, type: NotificationType) => void;
   onAddProjectForArtist?: (email: string) => void;
+  onEditArtist?: (artist: any) => void;
 }) {
   const [statusFilter, setStatusFilter] = useState<string>(initialStatusFilter || "all");
 
@@ -744,6 +816,32 @@ export function ArtistDetailModal({
             </div>
 
             <div className="flex flex-wrap items-center gap-2 shrink-0">
+              {onEditArtist && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    onClose();
+                    onEditArtist({
+                      name: primary.artistName,
+                      email: primary.artistEmail,
+                      phone: primary.artistPhone,
+                      whatsapp: primary.artistWhatsapp,
+                      city: primary.artistCity,
+                      bio: primary.artistBio,
+                      photo: primary.artistPhoto,
+                      social,
+                      releasesCount: artistSubmissions.length,
+                    });
+                  }}
+                  className="h-8 rounded-full text-xs gap-1.5 text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15"
+                  title="Modifier les coordonnées et profil de cet artiste"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  <span>Modifier l'artiste</span>
+                </Button>
+              )}
               {onAddProjectForArtist && (
                 <Button
                   type="button"
